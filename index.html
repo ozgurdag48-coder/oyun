@@ -3,631 +3,710 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Matematiksel ve Görsel Muhakeme Olimpiyatı</title>
+    <title>Advanced Cognitive & Mathematical Reasoning Suite</title>
     <style>
         :root {
-            --primary: #4a6fa5;
-            --secondary: #13c2c2;
-            --success: #389e0d;
-            --danger: #cf1322;
-            --warning: #faad14;
-            --bg: #f0f2f5;
-            --card-bg: #ffffff;
+            --bg-main: #0f172a;
+            --bg-surface: #1e293b;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --color-primary: #6366f1;
+            --color-primary-hover: #4f46e5;
+            --color-success: #10b981;
+            --color-danger: #ef4444;
+            --color-border: #334155;
+            --font-family: 'Inter', system-ui, -apple-system, sans-serif;
         }
 
-        * { box-sizing: border-box; font-family: 'Segoe UI', system-ui, sans-serif; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: var(--font-family); }
 
         body {
-            background-color: var(--bg);
-            margin: 0;
-            padding: 20px;
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            min-height: 100vh;
             display: flex;
             flex-direction: column;
             align-items: center;
-            user-select: none;
+            padding: 40px 20px;
+            overflow-x: hidden;
         }
 
-        h1 { color: #262626; margin: 10px 0; text-align: center; font-size: 2rem; }
-        h2 { margin-top: 0; color: #434343; font-size: 1.4rem; }
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            max-width: 800px;
+        }
 
-        .scoreboard {
-            background: white;
-            padding: 12px 25px;
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        header h1 { font-size: 2.2rem; font-weight: 800; tracking: -0.05em; margin-bottom: 8px; color: #fff; }
+        header p { color: var(--text-muted); font-size: 1rem; }
+
+        .dashboard-stats {
             display: flex;
-            gap: 30px;
-            margin-bottom: 25px;
-            font-weight: bold;
-            font-size: 1.1rem;
-            border-left: 5px solid var(--primary);
+            gap: 20px;
+            background: var(--bg-surface);
+            padding: 16px 32px;
+            border-radius: 16px;
+            border: 1px solid var(--color-border);
+            margin-bottom: 40px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
         }
 
-        /* ANA MENÜ */
-        #main-menu {
+        .stat-item { display: flex; flex-direction: column; align-items: center; min-width: 120px; }
+        .stat-label { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); margin-bottom: 4px; }
+        .stat-value { font-size: 1.4rem; font-weight: 700; color: var(--color-primary); }
+
+        /* MENU ARCHITECTURE */
+        .menu-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 20px;
-            max-width: 950px;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+            max-width: 1000px;
             width: 100%;
         }
 
-        .game-card {
-            background: var(--card-bg);
-            border-radius: 12px;
-            padding: 25px;
-            text-align: center;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        .app-card {
+            background: var(--bg-surface);
+            border: 1px solid var(--color-border);
+            border-radius: 20px;
+            padding: 30px;
             cursor: pointer;
-            transition: all 0.2s ease;
-            border: 1px solid #f0f0f0;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
         }
 
-        .game-card:hover { 
-            transform: translateY(-4px); 
-            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
-            border-color: var(--primary);
+        .app-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--color-primary);
+            box-shadow: 0 12px 30px rgba(99, 102, 241, 0.1);
         }
-        .game-card .icon { font-size: 3rem; margin-bottom: 12px; }
-        .game-card h3 { margin: 8px 0; color: #262626; font-size: 1.2rem; }
-        .game-card p { font-size: 0.9rem; color: #8c8c8c; line-height: 1.4; }
 
-        /* EKRANLAR */
-        .screen { 
-            display: none; 
-            width: 100%; 
-            max-width: 550px; 
-            background: white; 
-            padding: 30px; 
-            border-radius: 16px; 
-            box-shadow: 0 10px 30px rgba(0,0,0,0.08); 
-            text-align: center; 
+        .app-card .card-icon { font-size: 2.5rem; margin-bottom: 16px; display: block; }
+        .app-card h3 { font-size: 1.25rem; font-weight: 700; margin-bottom: 8px; color: #fff; }
+        .app-card p { font-size: 0.9rem; color: var(--text-muted); line-height: 1.5; }
+
+        /* SCREEN MANAGEMENT */
+        .game-wrapper {
+            display: none;
+            width: 100%;
+            max-width: 600px;
+            background: var(--bg-surface);
+            border: 1px solid var(--color-border);
+            border-radius: 24px;
+            padding: 35px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
         }
-        .screen.active { display: flex; flex-direction: column; align-items: center; }
+        .game-wrapper.active { display: flex; flex-direction: column; animation: viewFade 0.3s ease; }
 
-        /* ORTAK SEÇENEK BUTONLARI */
-        .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; width: 100%; margin-top: 20px; }
-        .opt-btn { 
-            background: #f5f5f5; 
-            color: #262626; 
-            border: 2px solid #d9d9d9; 
-            padding: 15px; 
-            font-size: 1.2rem; 
-            font-weight: bold;
-            border-radius: 8px; 
+        @keyframes viewFade { from { opacity: 0; transform: scale(0.98); } to { opacity: 1; transform: scale(1); } }
+
+        .view-header { width: 100%; margin-bottom: 25px; text-align: left; }
+        .view-title { font-size: 1.5rem; font-weight: 700; color: #fff; }
+        .view-desc { font-size: 0.9rem; color: var(--text-muted); margin-top: 4px; }
+
+        /* COMPONENT CONTROLS */
+        .workspace {
+            width: 100%;
+            min-height: 220px;
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid var(--color-border);
+            border-radius: 16px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 25px;
+            padding: 20px;
+            position: relative;
+        }
+
+        .btn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; width: 100%; }
+        .core-btn {
+            background: #273549;
+            color: var(--text-main);
+            border: 1px solid var(--color-border);
+            padding: 16px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border-radius: 12px;
             cursor: pointer;
             transition: all 0.2s;
         }
-        .opt-btn:hover { background: #e8e8e8; border-color: var(--primary); }
-        .opt-btn.correct { background-color: var(--success) !important; color: white; border-color: var(--success); }
-        .opt-btn.wrong { background-color: var(--danger) !important; color: white; border-color: var(--danger); }
+        .core-btn:hover { background: #33445c; border-color: var(--text-muted); }
+        .core-btn.correct { background: var(--color-success) !important; border-color: var(--color-success); color: #fff; }
+        .core-btn.wrong { background: var(--color-danger) !important; border-color: var(--color-danger); color: #fff; }
 
-        button.back-btn { 
-            background-color: #8c8c8c; 
-            color: white; border: none; 
-            padding: 12px; border-radius: 8px; 
-            font-weight: bold; width: 100%; 
-            margin-top: 25px; cursor: pointer;
+        .action-btn {
+            background: transparent;
+            color: var(--text-muted);
+            border: 1px solid var(--color-border);
+            padding: 12px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            width: 100%;
+            margin-top: 10px;
+            transition: all 0.2s;
         }
+        .action-btn:hover { color: #fff; background: rgba(255,255,255,0.05); }
 
-        /* GÖRSEL MUHAKEME ALANLARI */
-        .display-area { 
-            width: 100%; 
-            min-height: 160px; 
-            background: #fafafa; 
-            border: 2px dashed #d9d9d9; 
-            border-radius: 8px; 
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
-            margin: 15px 0;
-            padding: 10px;
-        }
+        /* SPECIFIC DESIGN MODULES */
+        .sequence-box { font-size: 2.2rem; font-weight: 800; letter-spacing: 2px; color: var(--color-primary); }
+        .matrix-layout { display: grid; grid-template-columns: repeat(2, 90px); gap: 12px; }
+        .matrix-node { width: 90px; height: 90px; background: var(--bg-main); border: 2px solid var(--color-border); border-radius: 8px; display: flex; justify-content: center; align-items: center; font-size: 2.2rem; }
+        
+        .target-node-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; width: 100%; }
+        .target-chip { background: #273549; padding: 20px; font-size: 1.5rem; font-weight: 700; border: 1px solid var(--color-border); border-radius: 12px; cursor: pointer; color: #fff; transition: all 0.2s; }
+        .target-chip:hover { border-color: var(--color-primary); }
+        .target-chip.active { background: var(--color-primary); border-color: var(--color-primary); }
 
-        /* MATRİS TASARIMI */
-        .matrix-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; width: 180px; }
-        .matrix-cell { width: 80px; height: 80px; background: white; border: 2px solid #bfbfbf; display: flex; justify-content: center; align-items: center; font-size: 2rem; }
-
-        /* TERAZİ TASARIMI */
-        .scale-container { display: flex; align-items: flex-end; width: 100%; justify-content: space-around; height: 120px; position: relative; }
-        .scale-pan { width: 120px; border-top: 4px solid #595959; text-align: center; padding-top: 8px; font-size: 1.5rem; }
-        .scale-base { position: absolute; bottom: 0; width: 10px; height: 60px; background: #595959; left: calc(50% - 5px); }
-
-        /* SİMETRİ TASARIMI */
-        .symmetry-box { display: flex; gap: 20px; align-items: center; width: 100%; justify-content: center; }
-        .sym-side { width: 120px; height: 120px; border: 2px solid #595959; position: relative; background: white; }
-        .sym-line { width: 2px; height: 140px; background: var(--danger); border-style: dashed; }
-
-        /* KONFETİ */
-        #confetti-canvas { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 999; display: none; }
+        canvas { max-width: 100%; display: block; }
     </style>
 </head>
 <body>
 
-    <canvas id="confetti-canvas"></canvas>
+    <header>
+        <h1>Cognitive Reasoning Analytics Suite</h1>
+        <p>Matematiksel Mantık, Mekansal İlişkiler ve İleri Düzey Görsel Muhakeme Modülleri</p>
+    </header>
 
-    <h1>🧠 Matematiksel ve Görsel Muhakeme Olimpiyatı </h1>
-
-    <div class="scoreboard">
-        <div>Zeka Puanı (IQ): <span id="total-score">0</span></div>
-        <div>Unvan: <span id="rank">Analist</span></div>
-    </div>
-
-    <!-- ANA MENÜ -->
-    <div id="main-menu">
-        <div class="game-card" onclick="startPatterns()">
-            <div class="icon">🔢</div>
-            <h3>Sayı Dizileri</h3>
-            <p>Sayılar arasındaki gizli matematiksel kuralı çöz, diziyi tamamla.</p>
+    <div class="dashboard-stats">
+        <div class="stat-item">
+            <span class="stat-label">Bilişsel Skor</span>
+            <span class="stat-value" id="global-score">0</span>
         </div>
-        <div class="game-card" onclick="startMatrix()">
-            <div class="icon">🧩</div>
-            <h3>Matris Tamamlama</h3>
-            <p>Şekiller arasındaki mantıksal değişimi kavra, boşluğu doldur.</p>
-        </div>
-        <div class="game-card" onclick="startScales()">
-            <div class="icon">⚖️</div>
-            <h3>Kütle Dengesi (Terazi)</h3>
-            <p>Görsel denklemleri analiz et, teraziyi kusursuz dengeye getir.</p>
-        </div>
-        <div class="game-card" onclick="startCubes()">
-            <div class="icon">📦</div>
-            <h3>Küp Sayma</h3>
-            <p>Üç boyutlu uzayda arkada gizlenen küpleri zihninde canlandırıp say.</p>
-        </div>
-        <div class="game-card" onclick="startSymmetry()">
-            <div class="icon">🪞</div>
-            <h3>Simetri Dedektifi</h3>
-            <p>Kırmızı eksene göre şeklin ayna yansımasını muhakeme et.</p>
-        </div>
-        <div class="game-card" onclick="startTargetSum()">
-            <div class="icon">🎯</div>
-            <h3>Hedef Toplamı</h3>
-            <p>Ekranda verilen hedef sayıya ulaşmak için doğru iki sayıyı eşle.</p>
+        <div class="stat-item">
+            <span class="stat-label">Global Seviye</span>
+            <span class="stat-value" id="global-rank">Tier-1</span>
         </div>
     </div>
 
-    <!-- 1. SAYI DİZİLERİ -->
-    <div id="game-patterns" class="screen">
-        <h2>🔢 Eksik Sayıyı Bul (Örüntü)</h2>
-        <div class="display-area" id="pattern-display" style="font-size: 2rem; font-weight: bold; letter-spacing: 5px; color: var(--primary);"></div>
-        <div class="options-grid" id="pattern-opts"></div>
-        <button class="back-btn" onclick="toMenu()">Menüye Dön</button>
-    </div>
-
-    <!-- 2. MATRİS TAMAMLAMA -->
-    <div id="game-matrix" class="screen">
-        <h2>🧩 Mantıksal Şekil Matrisi</h2>
-        <div class="display-area">
-            <div class="matrix-grid" id="matrix-container"></div>
+    <!-- MAIN DASHBOARD MENU -->
+    <div id="dashboard-view" class="menu-grid">
+        <div class="app-card" onclick="Engine.loadController('Patterns')">
+            <span class="card-icon">🔢</span>
+            <h3>Sayısal Örüntü Analizi</h3>
+            <p>Değişken diziler arasındaki cebirsel ve ardışık mantık kurallarını matematiksel olarak modelleyin.</p>
         </div>
-        <div class="options-grid" id="matrix-opts"></div>
-        <button class="back-btn" onclick="toMenu()">Menüye Dön</button>
-    </div>
-
-    <!-- 3. KÜTLE DENGESİ -->
-    <div id="game-scales" class="screen">
-        <h2>⚖️ Teraziyi Dengele</h2>
-        <div class="display-area" style="min-height:180px;">
-            <div class="scale-container">
-                <div class="scale-pan" id="scale-left"></div>
-                <div class="scale-base"></div>
-                <div class="scale-pan" id="scale-right">?</div>
-            </div>
+        <div class="app-card" onclick="Engine.loadController('Matrix')">
+            <span class="card-icon">🧩</span>
+            <h3>Matris Matürasyon Testi</h3>
+            <p>Raven standartlarına uygun soyut görsel sembol dönüşümlerini geometrik olarak muhakeme edin.</p>
         </div>
-        <div class="options-grid" id="scale-opts"></div>
-        <button class="back-btn" onclick="toMenu()">Menüye Dön</button>
-    </div>
-
-    <!-- 4. KÜP SAYMA -->
-    <div id="game-cubes" class="screen">
-        <h2>📦 Toplam Küp Sayısı Kaçtır?</h2>
-        <div class="display-area" style="min-height:200px;">
-            <canvas id="cube-canvas" width="250" height="180"></canvas>
+        <div class="app-card" onclick="Engine.loadController('Scales')">
+            <span class="card-icon">⚖️</span>
+            <h3>Cebirsel Kütle Dengesi</h3>
+            <p>Terazi sistemleri üzerindeki simgesel değişkenleri doğrusal denklemler kurarak dengeleyin.</p>
         </div>
-        <div class="options-grid" id="cube-opts"></div>
-        <button class="back-btn" onclick="toMenu()">Menüye Dön</button>
-    </div>
-
-    <!-- 5. SİMETRİ DEDEKTİFİ -->
-    <div id="game-symmetry" class="screen">
-        <h2>🪞 Şeklin Simetriğini Seç</h2>
-        <div class="display-area">
-            <div class="symmetry-box">
-                <canvas id="sym-source" width="100" height="100" style="border:1px solid #ccc;"></canvas>
-                <div class="sym-line"></div>
-                <div style="width:100px; height:100px; border:2px dashed #999; display:flex; justify-content:center; align-items:center; font-size:2rem; color:#999;">?</div>
-            </div>
+        <div class="app-card" onclick="Engine.loadController('Cubes')">
+            <span class="card-icon">📦</span>
+            <h3>Uzamsal Küp Projeksiyonu</h3>
+            <p>3 boyutlu matris uzayında gizli derinlik vektörlerine sahip izometrik blok hacimlerini hesaplayın.</p>
         </div>
-        <div class="options-grid" id="sym-opts"></div>
-        <button class="back-btn" onclick="toMenu()">Menüye Dön</button>
+        <div class="app-card" onclick="Engine.loadController('Symmetry')">
+            <span class="card-icon">🪞</span>
+            <h3>Vektörel Yansıma Matrisi</h3>
+            <p>Rastgele üretilen poligonların kartelyen eksen yansımalarını uzamsal simetride tespit edin.</p>
+        </div>
+        <div class="app-card" onclick="Engine.loadController('TargetSum')">
+            <span class="card-icon">🎯</span>
+            <h3>Kombinasyonel Optimizasyon</h3>
+            <p>Dağınık veri havuzunda aranan hedef integral/toplam değerini veren sayı kümelerini eşleyin.</p>
+        </div>
     </div>
 
-    <!-- 6. HEDEF TOPLAMI -->
-    <div id="game-target" class="screen">
-        <h2>🎯 Hangi İkisinin Toplamı: <span id="target-num" style="color:var(--danger)">0</span>?</h2>
-        <div class="options-grid" id="target-nums-grid" style="grid-template-columns: repeat(3, 1fr);"></div>
-        <button class="back-btn" onclick="toMenu()">Menüye Dön</button>
+    <!-- GAME CONTAINERS -->
+    <div id="view-patterns" class="game-wrapper">
+        <div class="view-header">
+            <div class="view-title">Sayısal Örüntü Analizi</div>
+            <div class="view-desc">Dizideki matematiksel fonksiyon kuralını analiz edip bilinmeyeni bulun.</div>
+        </div>
+        <div class="workspace">
+            <div class="sequence-box" id="node-pattern-render"></div>
+        </div>
+        <div class="btn-grid" id="node-pattern-opts"></div>
+        <button class="action-btn" onclick="Engine.exitToDashboard()">Dashboard'a Dön</button>
+    </div>
+
+    <div id="view-matrix" class="game-wrapper">
+        <div class="view-header">
+            <div class="view-title">Matris Matürasyon Testi</div>
+            <div class="view-desc">Boş bırakılan 4. hücreye gelecek doğru geometrik yönelimi saptayın.</div>
+        </div>
+        <div class="workspace">
+            <div class="matrix-layout" id="node-matrix-render"></div>
+        </div>
+        <div class="btn-grid" id="node-matrix-opts"></div>
+        <button class="action-btn" onclick="Engine.exitToDashboard()">Dashboard'a Dön</button>
+    </div>
+
+    <div id="view-scales" class="game-wrapper">
+        <div class="view-header">
+            <div class="view-title">Cebirsel Kütle Dengesi</div>
+            <div class="view-desc">Sol kefedeki kütle ilişkisine göre sağ kefedeki soru işaretini çözümleyin.</div>
+        </div>
+        <div class="workspace">
+            <canvas id="canvas-scales" width="450" height="180"></canvas>
+        </div>
+        <div class="btn-grid" id="node-scales-opts"></div>
+        <button class="action-btn" onclick="Engine.exitToDashboard()">Dashboard'a Dön</button>
+    </div>
+
+    <div id="view-cubes" class="game-wrapper">
+        <div class="view-header">
+            <div class="view-title">Uzamsal Küp Projeksiyonu</div>
+            <div class="view-desc">Gizli bölmeler dahil izometrik izdüşümü verilen toplam birim küp sayısını bulun.</div>
+        </div>
+        <div class="workspace">
+            <canvas id="canvas-cubes" width="300" height="220"></canvas>
+        </div>
+        <div class="btn-grid" id="node-cubes-opts"></div>
+        <button class="action-btn" onclick="Engine.exitToDashboard()">Dashboard'a Dön</button>
+    </div>
+
+    <div id="view-symmetry" class="game-wrapper">
+        <div class="view-header">
+            <div class="view-title">Vektörel Yansıma Matrisi</div>
+            <div class="view-desc">Orijinal yapının dikey kesit eksenindeki kusursuz ayna simetrisini bulun.</div>
+        </div>
+        <div class="workspace">
+            <canvas id="canvas-symmetry" width="360" height="160"></canvas>
+        </div>
+        <div class="btn-grid" id="node-symmetry-opts"></div>
+        <button class="action-btn" onclick="Engine.exitToDashboard()">Dashboard'a Dön</button>
+    </div>
+
+    <div id="view-target" class="game-wrapper">
+        <div class="view-header">
+            <div class="view-title">Kombinasyonel Optimizasyon</div>
+            <div class="view-desc">Toplamları tam olarak şu değeri veren çifti seçin: <span id="node-target-val" style="color:var(--color-primary); font-weight:700;">0</span></div>
+        </div>
+        <div class="workspace">
+            <div class="target-node-grid" id="node-target-grid"></div>
+        </div>
+        <button class="action-btn" onclick="Engine.exitToDashboard()">Dashboard'a Dön</button>
     </div>
 
     <script>
-        let score = 0;
-        let activeTimers = [];
+        /**
+         * COGNITIVE REASONING SUITE - ARCHITECTURE ENGINE
+         * Object-Oriented Standalone Architecture
+         */
+        
+        const Engine = {
+            score: 0,
+            activeLoop: null,
 
-        function addScore(points) {
-            score += points;
-            document.getElementById('total-score').innerText = score;
-            
-            let rank = "Analist";
-            if(score >= 120) rank = "Dahi 🧠";
-            else if(score >= 80) rank = "Stratejist 🔍";
-            else if(score >= 40) rank = "Mühendis 🛠️";
-            document.getElementById('rank').innerText = rank;
-            if(score % 50 === 0) celebrate();
-        }
+            init() {
+                this.updateScoreUI();
+            },
 
-        function showScreen(id) {
-            document.getElementById('main-menu').style.display = 'none';
-            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-            document.getElementById(id).classList.add('active');
-        }
+            loadController(moduleName) {
+                this.exitActiveLoops();
+                document.getElementById('dashboard-view').style.display = 'none';
+                
+                const views = ['Patterns', 'Matrix', 'Scales', 'Cubes', 'Symmetry', 'TargetSum'];
+                views.forEach(v => document.getElementById(`view-${v.toLowerCase()}`).classList.remove('active'));
 
-        function toMenu() {
-            activeTimers.forEach(t => clearTimeout(t));
-            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-            document.getElementById('main-menu').style.display = 'grid';
-        }
+                switch(moduleName) {
+                    case 'Patterns': Modules.Patterns.init(); break;
+                    case 'Matrix': Modules.Matrix.init(); break;
+                    case 'Scales': Modules.Scales.init(); break;
+                    case 'Cubes': Modules.Cubes.init(); break;
+                    case 'Symmetry': Modules.Symmetry.init(); break;
+                    case 'TargetSum': Modules.TargetSum.init(); break;
+                }
+            },
 
-        function lockOptions(className) {
-            document.querySelectorAll('.'+className).forEach(b => b.style.pointerEvents = 'none');
-        }
+            exitToDashboard() {
+                this.exitActiveLoops();
+                const wrappers = document.querySelectorAll('.game-wrapper');
+                wrappers.forEach(w => w.classList.remove('active'));
+                document.getElementById('dashboard-view').style.display = 'grid';
+            },
 
-        // ========================================================
-        // 1. SAYI DİZİLERİ (MATEMATİKSEL MUHAKEME)
-        // ========================================================
-        const patternsData = [
-            { seq: "2 - 4 - 8 - 16 - ?", ans: 32, opts: [24, 30, 32, 64] },
-            { seq: "5 - 8 - 11 - 14 - ?", ans: 17, opts: [15, 16, 17, 20] },
-            { seq: "20 - 17 - 14 - 11 - ?", ans: 8, opts: [9, 8, 7, 6] },
-            { seq: "1 - 3 - 9 - 27 - ?", ans: 81, opts: [36, 54, 81, 90] },
-            { seq: "2 - 3 - 5 - 8 - ?", ans: 12, opts: [10, 11, 12, 13] }
-        ];
-        let currentPatternIdx = 0;
+            exitActiveLoops() {
+                if (this.activeLoop) {
+                    clearTimeout(this.activeLoop);
+                    this.activeLoop = null;
+                }
+            },
 
-        function startPatterns() {
-            showScreen('game-patterns');
-            currentPatternIdx = Math.floor(Math.random() * patternsData.length);
-            let q = patternsData[currentPatternIdx];
-            document.getElementById('pattern-display').innerText = q.seq;
-            
-            let container = document.getElementById('pattern-opts');
-            container.innerHTML = '';
-            q.opts.forEach(o => {
-                let btn = document.createElement('button');
-                btn.className = 'opt-btn pattern-btn';
-                btn.innerText = o;
-                btn.onclick = () => {
-                    lockOptions('pattern-btn');
-                    if(o === q.ans) { btn.classList.add('correct'); addScore(10); }
-                    else { btn.classList.add('wrong'); }
-                    activeTimers.push(setTimeout(startPatterns, 1000));
-                };
-                container.appendChild(btn);
-            });
-        }
+            addMetrics(pts) {
+                this.score += pts;
+                this.updateScoreUI();
+            },
 
-        // ========================================================
-        // 2. MATRİS TAMAMLAMA (GÖRSEL MUHAKEME)
-        // ========================================================
-        const matrixData = [
-            { cells: ['🔴', '🟥', '🔵', '?'], ans: '🔷', opts: ['🔷', '🔺', '🟡', '⬛'] }, // Yuvarlak köşeliye dönüyor
-            { cells: ['⭐', '⭐⭐', '🎈', '?'], ans: '🎈🎈', opts: ['🎈🎈', '🎈🎈🎈', '⭐', '❌'] }, // Miktar artıyor
-            { cells: ['🍏', '🍎', '🥦', '?'], ans: '🥕', opts: ['🥕', '🐟', '✈️', '🍏'] }, // Meyve meyve, sebze sebze
-            { cells: ['🔼', '🔽', '◀️', '?'], ans: '▶️', opts: ['▶️', '🔼', '🔽', '🔄'] } // Yön çevirme
-        ];
+            updateScoreUI() {
+                document.getElementById('global-score').innerText = this.score;
+                let tier = "Tier-1 (Analist)";
+                if(this.score >= 150) tier = "Tier-4 (Dahi Seviye)";
+                else if(this.score >= 100) tier = "Tier-3 (Stratejist)";
+                else if(this.score >= 50) tier = "Tier-2 (Uzman)";
+                document.getElementById('global-rank').innerText = tier;
+            },
 
-        function startMatrix() {
-            showScreen('game-matrix');
-            let q = matrixData[Math.floor(Math.random() * matrixData.length)];
-            let mContainer = document.getElementById('matrix-container');
-            mContainer.innerHTML = '';
-            
-            q.cells.forEach(c => {
-                let cell = document.createElement('div');
-                cell.className = 'matrix-cell';
-                cell.innerText = c;
-                mContainer.appendChild(cell);
-            });
-
-            let optsContainer = document.getElementById('matrix-opts');
-            optsContainer.innerHTML = '';
-            q.opts.forEach(o => {
-                let btn = document.createElement('button');
-                btn.className = 'opt-btn m-btn';
-                btn.innerText = o;
-                btn.onclick = () => {
-                    lockOptions('m-btn');
-                    if(o === q.ans) { btn.classList.add('correct'); addScore(15); }
-                    else { btn.classList.add('wrong'); }
-                    activeTimers.push(setTimeout(startMatrix, 1000));
-                };
-                optsContainer.appendChild(btn);
-            });
-        }
-
-        // ========================================================
-        // 3. KÜTLE DENGESİ (MATEMATİKSEL MUHAKEME)
-        // ========================================================
-        const scalesData = [
-            { left: "🦊 + 🦊", rightAns: "🦁", textRight: "?", ans: "🦁", opts: ["🦁", "🦊", "🦊+🦁", "🐱"] }, // 1 Aslan = 2 Tilki
-            { left: "💎 + 💎 + 💎", rightAns: "👑", textRight: "?", ans: "👑", opts: ["👑", "💎", "👑+💎", "💰"] },
-            { left: "🍎 + 🍎", rightAns: "🍏 + 🍏 + 🍏 + 🍏", textRight: "🍎 = ?", ans: "🍏+🍏", opts: ["🍏+🍏", "🍏", "🍏+🍏+🍏", "🍎"] }
-        ];
-
-        function startScales() {
-            showScreen('game-scales');
-            let q = scalesData[Math.floor(Math.random() * scalesData.length)];
-            document.getElementById('scale-left').innerText = q.left;
-            document.getElementById('scale-right').innerText = q.textRight;
-
-            let optsContainer = document.getElementById('scale-opts');
-            optsContainer.innerHTML = '';
-            q.opts.forEach(o => {
-                let btn = document.createElement('button');
-                btn.className = 'opt-btn s-btn';
-                btn.innerText = o;
-                btn.onclick = () => {
-                    lockOptions('s-btn');
-                    if(o === q.ans) { btn.classList.add('correct'); addScore(15); }
-                    else { btn.classList.add('wrong'); }
-                    activeTimers.push(setTimeout(startScales, 1000));
-                };
-                optsContainer.appendChild(btn);
-            });
-        }
-
-        // ========================================================
-        // 4. KÜP SAYMA (UZAMSAL-GÖRSEL MUHAKEME)
-        // ========================================================
-        function startCubes() {
-            showScreen('game-cubes');
-            let canvas = document.getElementById('cube-canvas');
-            let ctx = canvas.getContext('2d');
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-            // Rastgele 3 farklı küp yapısı mimarisi oluşturma
-            let setup = Math.floor(Math.random() * 3);
-            let totalCubes = 0;
-            
-            function drawIsometricCube(x, y, size) {
-                // Ön yüz
-                ctx.fillStyle = "#4a6fa5";
-                ctx.beginPath();
-                ctx.moveTo(x, y);
-                ctx.lineTo(x + size, y + size/2);
-                ctx.lineTo(x + size, y + size * 1.5);
-                ctx.lineTo(x, y + size);
-                ctx.closePath();
-                ctx.fill(); ctx.stroke();
-
-                // Sağ yüz
-                ctx.fillStyle = "#365584";
-                ctx.beginPath();
-                ctx.moveTo(x + size, y + size/2);
-                ctx.lineTo(x + size * 2, y);
-                ctx.lineTo(x + size * 2, y + size);
-                ctx.lineTo(x + size, y + size * 1.5);
-                ctx.closePath();
-                ctx.fill(); ctx.stroke();
-
-                // Üst yüz
-                ctx.fillStyle = "#638ecb";
-                ctx.beginPath();
-                ctx.moveTo(x, y);
-                ctx.lineTo(x + size, y - size/2);
-                ctx.lineTo(x + size * 2, y);
-                ctx.lineTo(x + size, y + size/2);
-                ctx.closePath();
-                ctx.fill(); ctx.stroke();
+            freezeOptions(selector) {
+                document.querySelectorAll(selector).forEach(el => el.style.pointerEvents = 'none');
             }
+        };
 
-            ctx.strokeStyle = "#ffffff";
-            ctx.lineWidth = 1.5;
+        const Modules = {
+            // MODULE 1: ARDILIŞIK SAYI ÖRÜNTÜLERİ
+            Patterns: {
+                generators: [
+                    () => { let r = Math.floor(Math.random()*4)+2; return { s: `2 - ${2*r} - ${2*r*r} - ${2*r*r*r} - ?`, a: 2*Math.pow(r,4) }; },
+                    () => { let s = Math.floor(Math.random()*10)+5; let d = Math.floor(Math.random()*4)+3; return { s: `${s} - ${s+d} - ${s+2*d} - ${s+3*d} - ?`, a: s+4*d }; },
+                    () => { let s = Math.floor(Math.random()*5)+2; return { s: `${s} - ${s*2+1} - ${(s*2+1)*2+1} - ?`, a: ((s*2+1)*2+1)*2+1 }; }
+                ],
+                init() {
+                    document.getElementById('view-patterns').classList.add('active');
+                    let data = this.generators[Math.floor(Math.random() * this.generators.length)]();
+                    document.getElementById('node-pattern-render').innerText = data.s;
 
-            if(setup === 0) {
-                // Zemin: 2x2, Üstte 1 tane (Toplam 5 küp)
-                drawIsometricCube(60, 100, 30);
-                drawIsometricCube(120, 70, 30);
-                drawIsometricCube(120, 130, 30); // Ön sıra
-                drawIsometricCube(120, 70 - 30, 30); // 2. kat arka üstü
-                totalCubes = 5; // (Arka tabandaki gizli küp dahil)
-            } else if (setup === 1) {
-                // Merdiven yapısı: Arka 3 kat, orta 2 kat, ön 1 kat (Toplam 6 küp)
-                drawIsometricCube(50, 110, 25);
-                drawIsometricCube(50, 110 - 25, 25);
-                drawIsometricCube(50, 110 - 50, 25); // En arka kule
-                drawIsometricCube(100, 110, 25);
-                drawIsometricCube(100, 110 - 25, 25); // Orta kule
-                drawIsometricCube(150, 110, 25); // Ön kule
-                totalCubes = 6;
-            } else {
-                // Yan yana sütunlar (Toplam 4 küp)
-                drawIsometricCube(60, 90, 30);
-                drawIsometricCube(60, 90 - 30, 30);
-                drawIsometricCube(120, 110, 30);
-                drawIsometricCube(120, 110 - 30, 30);
-                totalCubes = 4;
-            }
+                    let pool = new Set([data.a]);
+                    while(pool.size < 4) pool.add(data.a + Math.floor(Math.random()*20) - 10);
+                    let arr = Array.from(pool).sort(() => Math.random() - 0.5);
 
-            let opts = [totalCubes, totalCubes+1, totalCubes-1, totalCubes+2].sort(() => Math.random() - 0.5);
-            let optsContainer = document.getElementById('cube-opts');
-            optsContainer.innerHTML = '';
-            opts.forEach(o => {
-                let btn = document.createElement('button');
-                btn.className = 'opt-btn c-btn';
-                btn.innerText = o;
-                btn.onclick = () => {
-                    lockOptions('c-btn');
-                    if(o === totalCubes) { btn.classList.add('correct'); addScore(20); }
-                    else { btn.classList.add('wrong'); }
-                    activeTimers.push(setTimeout(startCubes, 1200));
-                };
-                optsContainer.appendChild(btn);
-            });
-        }
+                    const opts = document.getElementById('node-pattern-opts');
+                    opts.innerHTML = '';
+                    arr.forEach(val => {
+                        let btn = document.createElement('button');
+                        btn.className = 'core-btn p-opt-node';
+                        btn.innerText = val;
+                        btn.onclick = () => {
+                            Engine.freezeOptions('.p-opt-node');
+                            if(val === data.a) { btn.classList.add('correct'); Engine.addMetrics(10); }
+                            else { btn.classList.add('wrong'); }
+                            Engine.activeLoop = setTimeout(() => this.init(), 1000);
+                        };
+                        opts.appendChild(btn);
+                    });
+                }
+            },
 
-        // ========================================================
-        // 5. SİMETRİ DEDEKTİFİ (GÖRSEL MUHAKEME)
-        // ========================================================
-        function drawSymmetryShape(ctx, type) {
-            ctx.clearRect(0,0,100,100);
-            ctx.fillStyle = "var(--primary)";
-            ctx.strokeStyle = "#333";
-            ctx.lineWidth = 2;
+            // MODULE 2: RAVEN MATRİS TESTİ
+            Matrix: {
+                dataset: [
+                    { nodes: ['⚛️', '☸️', '♊', '?'], ans: '♋', opts: ['♋', '♌', '⚛️', '⚙️'] },
+                    { nodes: ['⬆️', '➡️', '⬇️', '?'], ans: '⬅️', opts: ['⬅️', '↗️', '↖️', '⬇️'] },
+                    { nodes: ['🟢', '🟩', '🔵', '?'], ans: '🟦', opts: ['🟦', '🔺', '🟡', '⚫'] },
+                    { nodes: ['◼️', '◻️', '🔷', '?'], ans: '🔶', opts: ['🔶', '🔷', '🔴', '⚫'] }
+                ],
+                init() {
+                    document.getElementById('view-matrix').classList.add('active');
+                    let q = this.dataset[Math.floor(Math.random() * this.dataset.length)];
+                    const container = document.getElementById('node-matrix-render');
+                    container.innerHTML = '';
+                    q.nodes.forEach(n => {
+                        let d = document.createElement('div');
+                        d.className = 'matrix-node';
+                        d.innerText = n;
+                        container.appendChild(d);
+                    });
 
-            if(type === 'source') {
-                ctx.beginPath(); ctx.moveTo(20, 20); ctx.lineTo(80, 20); ctx.lineTo(20, 80); ctx.closePath(); ctx.fill(); ctx.stroke();
-                ctx.fillStyle = "var(--warning)";
-                ctx.fillRect(20, 20, 20, 20);
-            } else if (type === 'correct') {
-                // Tam dikey ayna simetriği (Sol-sağ ters yüz)
-                ctx.beginPath(); ctx.moveTo(80, 20); ctx.lineTo(20, 20); ctx.lineTo(80, 80); ctx.closePath(); ctx.fill(); ctx.stroke();
-                ctx.fillStyle = "var(--warning)";
-                ctx.fillRect(60, 20, 20, 20);
-            } else if (type === 'wrong1') {
-                // Aşağı doğru ters yüz (Yatay simetri - Yanlış)
-                ctx.beginPath(); ctx.moveTo(20, 80); ctx.lineTo(80, 80); ctx.lineTo(20, 20); ctx.closePath(); ctx.fill(); ctx.stroke();
-                ctx.fillStyle = "var(--warning)";
-                ctx.fillRect(20, 60, 20, 20);
-            } else {
-                // Aynısı (Değişmemiş - Yanlış)
-                ctx.beginPath(); ctx.moveTo(20, 20); ctx.lineTo(80, 20); ctx.lineTo(20, 80); ctx.closePath(); ctx.fill(); ctx.stroke();
-                ctx.fillStyle = "var(--warning)";
-                ctx.fillRect(20, 20, 20, 20);
-            }
-        }
+                    const opts = document.getElementById('node-matrix-opts');
+                    opts.innerHTML = '';
+                    q.opts.sort(() => Math.random() - 0.5).forEach(o => {
+                        let btn = document.createElement('button');
+                        btn.className = 'core-btn m-opt-node';
+                        btn.innerText = o;
+                        btn.onclick = () => {
+                            Engine.freezeOptions('.m-opt-node');
+                            if(o === q.ans) { btn.classList.add('correct'); Engine.addMetrics(15); }
+                            else { btn.classList.add('wrong'); }
+                            Engine.activeLoop = setTimeout(() => this.init(), 1000);
+                        };
+                        opts.appendChild(btn);
+                    });
+                }
+            },
 
-        function startSymmetry() {
-            showScreen('game-symmetry');
-            let srcCanvas = document.getElementById('sym-source');
-            drawSymmetryShape(srcCanvas.getContext('2d'), 'source');
+            // MODULE 3: DOĞRUSAL KÜTLE DENGELERİ
+            Scales: {
+                init() {
+                    document.getElementById('view-scales').classList.add('active');
+                    const canvas = document.getElementById('canvas-scales');
+                    const ctx = canvas.getContext('2d');
+                    ctx.clearRect(0,0,canvas.width,canvas.height);
 
-            let options = [
-                { id: 'A', type: 'correct' },
-                { id: 'B', type: 'wrong1' },
-                { id: 'C', type: 'wrong2' }
-            ].sort(() => Math.random() - 0.5);
+                    let leftWeight = Math.floor(Math.random()*3)+2;
+                    let rightItemVal = Math.floor(Math.random()*2)+1;
+                    
+                    // Terazi Fiziksel Çizimi (Canvas)
+                    ctx.strokeStyle = "#475569"; ctx.lineWidth = 4;
+                    ctx.beginPath(); ctx.moveTo(225, 150); ctx.lineTo(225, 60); ctx.stroke(); // Orta Mil
+                    ctx.beginPath(); ctx.moveTo(75, 60); ctx.lineTo(375, 60); ctx.stroke(); // Ana Kol
+                    ctx.beginPath(); ctx.moveTo(200, 150); ctx.lineTo(250, 150); ctx.stroke(); // Taban
 
-            let optsContainer = document.getElementById('sym-opts');
-            optsContainer.innerHTML = '';
+                    // Sol-Sağ Kefeler
+                    ctx.strokeStyle = "#6366f1";
+                    ctx.beginPath(); ctx.moveTo(75,60); ctx.lineTo(45,110); ctx.lineTo(105,110); ctx.closePath(); ctx.stroke();
+                    ctx.beginPath(); ctx.moveTo(375,60); ctx.lineTo(345,110); ctx.lineTo(405,110); ctx.closePath(); ctx.stroke();
 
-            options.forEach(opt => {
-                let div = document.createElement('div');
-                div.style.display = 'flex';
-                div.style.flexDirection = 'column';
-                div.style.alignItems = 'center';
+                    // Font Metrikleri
+                    ctx.fillStyle = "#fff"; ctx.font = "bold 16px sans-serif"; ctx.textAlign = "center";
+                    let leftStr = "📦 ".repeat(leftWeight);
+                    ctx.fillText(leftStr, 75, 135);
+                    ctx.fillText("❓", 375, 135);
 
-                let can = document.createElement('canvas');
-                can.width = 70; can.height = 70;
-                can.style.border = "1px solid #ccc";
-                can.style.cursor = "pointer";
-                can.style.background = "white";
-                can.style.borderRadius = "6px";
-                drawSymmetryShape(can.getContext('2d'), opt.type);
+                    // Soru Mantığı (1 Kutu = ne kadar?)
+                    let multiplier = Math.floor(Math.random()*2)+2; // Örn: 2 katı veya 3 katı
+                    let ansValue = leftWeight * multiplier;
+                    
+                    let optsData = [ansValue, ansValue+2, ansValue-1, ansValue+1].filter(v => v > 0);
+                    optsData = Array.from(new Set(optsData)).slice(0,4);
+                    while(optsData.length < 4) optsData.push(ansValue + optsData.length + 3);
+                    optsData.sort(() => Math.random() - 0.5);
 
-                can.onclick = () => {
-                    can.onclick = null;
-                    if(opt.type === 'correct') { can.style.border = "3px solid var(--success)"; addScore(20); }
-                    else { can.style.border = "3px solid var(--danger)"; }
-                    activeTimers.push(setTimeout(startSymmetry, 1200));
-                };
+                    const opts = document.getElementById('node-scales-opts');
+                    opts.innerHTML = '';
+                    optsData.forEach(v => {
+                        let btn = document.createElement('button');
+                        btn.className = 'core-btn s-opt-node';
+                        btn.innerText = `📦 = 💎 x ${v / leftWeight % 1 === 0 ? v/leftWeight : (v/leftWeight).toFixed(1)}`;
+                        if(v === leftWeight * multiplier) {
+                            btn.innerText = `📦 x 1 = 💎 x ${multiplier}`;
+                        }
+                        btn.onclick = () => {
+                            Engine.freezeOptions('.s-opt-node');
+                            if(v === leftWeight * multiplier) { btn.classList.add('correct'); Engine.addMetrics(20); }
+                            else { btn.classList.add('wrong'); }
+                            Engine.activeLoop = setTimeout(() => this.init(), 1200);
+                        };
+                        opts.appendChild(btn);
+                    });
+                }
+            },
 
-                div.appendChild(can);
-                optsContainer.appendChild(div);
-            });
-        }
+            // MODULE 4: ALGORİTMİK İZOMETRİK KÜP PROJEKSİYONU
+            Cubes: {
+                init() {
+                    document.getElementById('view-cubes').classList.add('active');
+                    const canvas = document.getElementById('canvas-cubes');
+                    const ctx = canvas.getContext('2d');
+                    ctx.clearRect(0,0,canvas.width,canvas.height);
 
-        // ========================================================
-        // 6. HEDEF TOPLAMI (MATEMATİKSEL MUHAKEME)
-        // ========================================================
-        function startTargetSum() {
-            showScreen('game-target');
-            let target = Math.floor(Math.random() * 15) + 10; // 10-25 arası hedef
-            document.getElementById('target-num').innerText = target;
+                    // Algoritmik Küp Blok Haritası Üretimi
+                    let totalCubes = 0;
+                    let grid = [
+                        [0, 0, 0],
+                        [0, 0, 0],
+                        [0, 0, 0]
+                    ];
 
-            let num1 = Math.floor(Math.random() * (target - 2)) + 1;
-            let num2 = target - num1;
-
-            let pool = [num1, num2];
-            while(pool.length < 6) {
-                let rand = Math.floor(Math.random() * 20) + 1;
-                if(!pool.includes(rand) && rand !== num1 && rand !== num2) pool.push(rand);
-            }
-            pool.sort(() => Math.random() - 0.5);
-
-            let grid = document.getElementById('target-nums-grid');
-            grid.innerHTML = '';
-            
-            let selectedBtns = [];
-            pool.forEach(val => {
-                let btn = document.createElement('button');
-                btn.className = 'opt-btn t-btn';
-                btn.style.fontSize = "1.5rem";
-                btn.innerText = val;
-                btn.onclick = () => {
-                    if(btn.classList.contains('correct')) return;
-                    btn.classList.add('correct');
-                    selectedBtns.push({el: btn, val: val});
-
-                    if(selectedBtns.length === 2) {
-                        lockOptions('t-btn');
-                        let sum = selectedBtns[0].val + selectedBtns[1].val;
-                        if(sum === target) {
-                            addScore(15);
-                            activeTimers.push(setTimeout(startTargetSum, 1000));
-                        } else {
-                            selectedBtns.forEach(b => { b.el.classList.remove('correct'); b.el.classList.add('wrong'); });
-                            activeTimers.push(setTimeout(startTargetSum, 1000));
+                    // Prosedürel Yükseklik İnşası
+                    for(let r=0; r<3; r++) {
+                        for(let c=0; c<3; c++) {
+                            if(r === 0 && c === 0) grid[r][c] = Math.floor(Math.random()*2)+2; // En arka yüksek kule
+                            else grid[r][c] = Math.floor(Math.random() * (grid[Math.max(0, r-1)][c] + 1));
+                            totalCubes += grid[r][c];
                         }
                     }
-                };
-                grid.appendChild(btn);
-            });
-        }
 
-        // ========================================================
-        // ÖDÜL KONFETİ EFEKTİ
-        // ========================================================
-        const canvas = document.getElementById("confetti-canvas");
-        const ctx = canvas.getContext("2d");
-        let confettiPieces = [];
-        let confettiAnimation;
+                    // Derinlik Sıralamasına Göre Çizim Motoru (Z-Indexing Isometric Render)
+                    const size = 22;
+                    const originX = 150;
+                    const originY = 60;
 
-        function celebrate() {
-            canvas.style.display = 'block';
-            confettiPieces = []; canvas.width = window.innerWidth; canvas.height = window.innerHeight;
-            for (let i = 0; i < 100; i++) {
-                confettiPieces.push({
-                    x: Math.random() * canvas.width, y: Math.random() * canvas.height - canvas.height,
-                    r: Math.random() * 5 + 4, d: Math.random() * canvas.height,
-                    color: `hsl(${Math.random() * 360}, 80%, 50%)`, tilt: Math.random() * 10 - 5
-                });
+                    function drawCube(isoX, isoY, isoZ) {
+                        let cx = originX + (isoX - isoY) * size * Math.cos(Math.PI/6);
+                        let cy = originY + (isoX + isoY) * size * Math.sin(Math.PI/6) - isoZ * size;
+
+                        // Üst Yüz (Işık Tepe Açısı)
+                        ctx.fillStyle = "#818cf8";
+                        ctx.beginPath();
+                        ctx.moveTo(cx, cy);
+                        ctx.lineTo(cx + size * Math.cos(Math.PI/6), cy + size * Math.sin(Math.PI/6));
+                        ctx.lineTo(cx, cy + size);
+                        ctx.lineTo(cx - size * Math.cos(Math.PI/6), cy + size * Math.sin(Math.PI/6));
+                        ctx.closePath(); ctx.fill(); ctx.stroke();
+
+                        // Sol Yüz (Gölge)
+                        ctx.fillStyle = "#4f46e5";
+                        ctx.beginPath();
+                        ctx.moveTo(cx - size * Math.cos(Math.PI/6), cy + size * Math.sin(Math.PI/6));
+                        ctx.lineTo(cx, cy + size);
+                        ctx.lineTo(cx, cy + size + size);
+                        ctx.lineTo(cx - size * Math.cos(Math.PI/6), cy + size * Math.sin(Math.PI/6) + size);
+                        ctx.closePath(); ctx.fill(); ctx.stroke();
+
+                        // Sağ Yüz (Karanlık Gölge)
+                        ctx.fillStyle = "#3730a3";
+                        ctx.beginPath();
+                        ctx.moveTo(cx, cy + size);
+                        ctx.lineTo(cx + size * Math.cos(Math.PI/6), cy + size * Math.sin(Math.PI/6));
+                        ctx.lineTo(cx + size * Math.cos(Math.PI/6), cy + size * Math.sin(Math.PI/6) + size);
+                        ctx.lineTo(cx, cy + size + size);
+                        ctx.closePath(); ctx.fill(); ctx.stroke();
+                    }
+
+                    ctx.strokeStyle = "rgba(15,23,42,0.4)";
+                    ctx.lineWidth = 1;
+
+                    // Arka sıradan öne doğru sıralı çizim
+                    for(let x=0; x<3; x++) {
+                        for(let y=0; y<3; y++) {
+                            for(let z=0; z<grid[x][y]; z++) {
+                                drawCube(x, y, z);
+                            }
+                        }
+                    }
+
+                    // Seçenek Havuzu
+                    let optsData = [totalCubes, totalCubes+1, totalCubes-1, totalCubes+2].sort(() => Math.random() - 0.5);
+                    const opts = document.getElementById('node-cubes-opts');
+                    opts.innerHTML = '';
+                    optsData.forEach(v => {
+                        let btn = document.createElement('button');
+                        btn.className = 'core-btn c-opt-node';
+                        btn.innerText = v;
+                        btn.onclick = () => {
+                            Engine.freezeOptions('.c-opt-node');
+                            if(v === totalCubes) { btn.classList.add('correct'); Engine.addMetrics(20); }
+                            else { btn.classList.add('wrong'); }
+                            Engine.activeLoop = setTimeout(() => this.init(), 1000);
+                        };
+                        opts.appendChild(btn);
+                    });
+                }
+            },
+
+            // MODULE 5: PROSEDÜREL VEKTÖREL SİMETRİ
+            Symmetry: {
+                init() {
+                    document.getElementById('view-symmetry').classList.add('active');
+                    const canvas = document.getElementById('canvas-symmetry');
+                    const ctx = canvas.getContext('2d');
+                    ctx.clearRect(0,0,canvas.width,canvas.height);
+
+                    // Eksen Çizgisi Çizimi
+                    ctx.strokeStyle = varColor('--color-danger'); ctx.lineWidth = 2; ctx.setLineDash([4, 4]);
+                    ctx.beginPath(); ctx.moveTo(180, 10); ctx.lineTo(180, 150); ctx.stroke(); ctx.setLineDash([]);
+
+                    // Rastgele Noktalar Kümesi Üretimi (Poligon)
+                    let points = [];
+                    for(let i=0; i<4; i++) {
+                        points.push({
+                            x: Math.floor(Math.random()*80) + 40,
+                            y: Math.floor(Math.random()*100) + 30
+                        });
+                    }
+
+                    // Sol Orijinal Şekli Çizme
+                    function drawShape(ctx, pts, offsetX) {
+                        ctx.fillStyle = "rgba(99, 102, 241, 0.3)";
+                        ctx.strokeStyle = "#818cf8"; ctx.lineWidth = 2;
+                        ctx.beginPath();
+                        ctx.moveTo(pts[0].x + offsetX, pts[0].y);
+                        for(let i=1; i<pts.length; i++) ctx.lineTo(pts[i].x + offsetX, pts[i].y);
+                        ctx.closePath(); ctx.fill(); ctx.stroke();
+                    }
+
+                    drawShape(ctx, points, 0); // Sol tarafa çizildi
+
+                    // Doğru Ayna Simetri Koordinatları (Matematiksel Dönüşüm)
+                    let correctMirrorPts = points.map(p => {
+                        let distToAxis = 180 - p.x;
+                        return { x: 180 + distToAxis, y: p.y };
+                    });
+
+                    // Yanlış Simetri Seçenekleri (Yatay Ters Çevirme vb.)
+                    let wrongMirrorPts = points.map(p => {
+                        return { x: 180 + (180 - p.x), y: 180 - p.y + 20 }; // Bozuk Y koordinatı
+                    });
+
+                    let typeSetup = Math.random() > 0.5;
+                    if(typeSetup) {
+                        drawShape(ctx, correctMirrorPts, 0); // Görsel olarak sağa doğru çizdik test amaçlı değil şıkları buton yapacağız.
+                    }
+                    
+                    // Şıkları oluştur (Ayna mı, Değil mi?)
+                    const opts = document.getElementById('node-symmetry-opts');
+                    opts.innerHTML = '';
+                    
+                    let options = [
+                        { text: 'Kusursuz Simetrik ✅', isTrue: true },
+                        { text: 'Asimetrik / Hatalı Yansıma ❌', isTrue: false }
+                    ];
+
+                    if(!typeSetup) {
+                        // Eğer rastgele şansımıza sağ tarafa yanlış şekli çizdiysek doğru cevabı güncelliyoruz
+                        ctx.clearRect(182, 0, canvas.width, canvas.height);
+                        drawShape(ctx, wrongMirrorPts, 0);
+                        options[0].isTrue = false;
+                        options[1].isTrue = true;
+                    }
+
+                    options.forEach(o => {
+                        let btn = document.createElement('button');
+                        btn.className = 'core-btn sym-opt-node';
+                        btn.innerText = o.text;
+                        btn.onclick = () => {
+                            Engine.freezeOptions('.sym-opt-node');
+                            if(o.isTrue) { btn.classList.add('correct'); Engine.addMetrics(20); }
+                            else { btn.classList.add('wrong'); }
+                            Engine.activeLoop = setTimeout(() => this.init(), 1200);
+                        };
+                        opts.appendChild(btn);
+                    });
+                }
+            },
+
+            // MODULE 6: KOMBİNASYONEL TOPLAM OPTİMİZASYONU
+            TargetSum: {
+                init() {
+                    document.getElementById('view-target').classList.add('active');
+                    let target = Math.floor(Math.random() * 25) + 20; // Target aralığı 20-45
+                    document.getElementById('node-target-val').innerText = target;
+
+                    let n1 = Math.floor(Math.random() * (target - 6)) + 3;
+                    let n2 = target - n1;
+
+                    let dataPool = [n1, n2];
+                    while(dataPool.length < 6) {
+                        let r = Math.floor(Math.random() * 40) + 2;
+                        if(!dataPool.includes(r) && r !== n1) dataPool.push(r);
+                    }
+                    dataPool.sort(() => Math.random() - 0.5);
+
+                    const grid = document.getElementById('node-target-grid');
+                    grid.innerHTML = '';
+
+                    let selections = [];
+                    dataPool.forEach(val => {
+                        let chip = document.createElement('button');
+                        chip.className = 'target-chip t-opt-node';
+                        chip.innerText = val;
+                        chip.onclick = () => {
+                            if(chip.classList.contains('active')) return;
+                            chip.classList.add('active');
+                            selections.push({ el: chip, v: val });
+
+                            if(selections.length === 2) {
+                                Engine.freezeOptions('.t-opt-node');
+                                let sum = selections[0].v + selections[1].v;
+                                if(sum === target) {
+                                    selections.forEach(s => s.el.style.background = 'var(--color-success)');
+                                    Engine.addMetrics(15);
+                                } else {
+                                    selections.forEach(s => s.el.style.background = 'var(--color-danger)');
+                                }
+                                Engine.activeLoop = setTimeout(() => this.init(), 1000);
+                            }
+                        };
+                        grid.appendChild(chip);
+                    });
+                }
             }
-            if(confettiAnimation) cancelAnimationFrame(confettiAnimation);
-            updateConfetti();
-            setTimeout(() => { cancelAnimationFrame(confettiAnimation); canvas.style.display = 'none'; }, 3000);
+        };
+
+        // Helper CSS variable extractor
+        function varColor(name) {
+            return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
         }
 
-        function updateConfetti() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            confettiPieces.forEach((p, index) => {
-                p.y += Math.cos(p.d) + 4; p.tilt += 0.1;
-                ctx.beginPath(); ctx.lineWidth = p.r; ctx.strokeStyle = p.color;
-                ctx.moveTo(p.x + p.tilt + p.r / 2, p.y); ctx.lineTo(p.x + p.tilt, p.y + p.tilt + p.r / 2); ctx.stroke();
-                if (p.y > canvas.height) { confettiPieces[index].y = -20; }
-            });
-            confettiAnimation = requestAnimationFrame(updateConfetti);
-        }
+        // Bootstrapping Application
+        window.onload = () => Engine.init();
     </script>
 </body>
 </html>
