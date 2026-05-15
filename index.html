@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Çocuklar İçin Oyun Olimpiyatı</title>
+    <title>Çocuklar İçin Süper Oyun Olimpiyatı</title>
     <style>
         :root {
             --primary: #6c5ce7;
@@ -11,10 +11,11 @@
             --success: #00b894;
             --danger: #d63031;
             --warning: #f1c40f;
-            --bg: #f0f2f5;
+            --bg: #eef2f7;
+            --card-bg: #ffffff;
         }
 
-        * { box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+        * { box-sizing: border-box; font-family: 'Segoe UI', system-ui, sans-serif; }
 
         body {
             background-color: var(--bg);
@@ -24,110 +25,144 @@
             flex-direction: column;
             align-items: center;
             overflow-x: hidden;
+            user-select: none;
         }
 
-        h1 { color: var(--primary); margin: 10px 0; text-align: center; }
+        h1 { color: var(--primary); text-shadow: 2px 2px 0px rgba(0,0,0,0.05); margin: 10px 0; text-align: center; font-size: 2.2rem; }
 
-        /* SKORBOARD VE LİDERLİK */
+        /* SKOR TABLOSU */
         .scoreboard {
             background: white;
-            padding: 15px 25px;
-            border-radius: 15px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            padding: 15px 30px;
+            border-radius: 50px;
+            box-shadow: 0 8px 20px rgba(108, 92, 231, 0.15);
             display: flex;
-            gap: 20px;
-            margin-bottom: 20px;
+            gap: 30px;
+            margin-bottom: 25px;
             font-weight: bold;
-            font-size: 1.1rem;
+            font-size: 1.2rem;
+            border: 3px solid var(--secondary);
         }
 
-        /* ANA MENÜ DÜZENİ */
+        /* ANA MENÜ */
         #main-menu {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
             gap: 20px;
-            max-width: 900px;
+            max-width: 950px;
             width: 100%;
         }
 
         .game-card {
-            background: white;
-            border-radius: 15px;
-            padding: 20px;
+            background: var(--card-bg);
+            border-radius: 24px;
+            padding: 25px;
             text-align: center;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.05);
             cursor: pointer;
-            transition: transform 0.2s;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 2px solid transparent;
         }
 
-        .game-card:hover { transform: translateY(-5px); }
-        .game-card .icon { font-size: 3.5rem; margin-bottom: 10px; }
-        .game-card h3 { margin: 5px 0; color: #333; }
-        .game-card p { font-size: 0.9rem; color: #777; }
+        .game-card:hover { 
+            transform: translateY(-8px) scale(1.02); 
+            box-shadow: 0 15px 30px rgba(108, 92, 231, 0.2);
+            border-color: var(--secondary);
+        }
+        .game-card .icon { font-size: 4rem; margin-bottom: 12px; display: inline-block; transition: transform 0.3s; }
+        .game-card:hover .icon { transform: scale(1.2) rotate(5deg); }
+        .game-card h3 { margin: 8px 0; color: #2d3436; font-size: 1.3rem; }
+        .game-card p { font-size: 0.95rem; color: #636e72; line-height: 1.4; }
 
-        /* TÜM EKRANLAR (BAŞLANGIÇTA GİZLİ) */
+        /* EKRANLAR */
         .screen { 
             display: none; 
             width: 100%; 
-            max-width: 500px; 
+            max-width: 520px; 
             background: white; 
-            padding: 25px; 
-            border-radius: 20px; 
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1); 
+            padding: 30px; 
+            border-radius: 32px; 
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1); 
             text-align: center; 
+            position: relative;
         }
-        
-        /* Sadece aktif olan ekran görünecek */
-        .screen.active { 
-            display: flex; 
-            flex-direction: column; 
-            align-items: center; 
-        }
+        .screen.active { display: flex; flex-direction: column; align-items: center; animation: fadeIn 0.4s ease-out; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
 
         button {
-            padding: 12px 25px;
-            font-size: 1rem;
+            padding: 14px 28px;
+            font-size: 1.1rem;
             background-color: var(--primary);
             color: white;
             border: none;
-            border-radius: 10px;
+            border-radius: 16px;
             cursor: pointer;
             font-weight: bold;
             margin-top: 15px;
             width: 100%;
+            transition: all 0.2s;
+            box-shadow: 0 4px 10px rgba(108, 92, 231, 0.3);
         }
-        button.back-btn { background-color: #7f8c8d; }
+        button:active { transform: scale(0.98); }
+        button.back-btn { background-color: #b2bec3; box-shadow: 0 4px 10px rgba(0,0,0,0.1); margin-top: 25px; }
+        button.back-btn:hover { background-color: #95a5a6; }
 
-        /* OYUN 1: HAFIZA */
-        .memory-board { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; width: 100%; margin-top: 15px; }
-        .m-card { aspect-ratio: 1; background: var(--primary); border-radius: 8px; font-size: 2rem; display: flex; justify-content: center; align-items: center; color: transparent; cursor: pointer; user-select: none; }
-        .m-card.flipped { background: #fff; color: initial; border: 2px solid var(--primary); }
-        .m-card.matched { background: var(--success); color: white; cursor: default; }
+        /* OYUN 1: 3D HAFIZA KARTLARI */
+        .memory-board { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; width: 100%; margin-top: 15px; perspective: 1000px; }
+        .m-card { 
+            aspect-ratio: 1; 
+            background: var(--primary); 
+            border-radius: 14px; 
+            font-size: 2.2rem; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            color: transparent; 
+            cursor: pointer; 
+            transform-style: preserve-3d;
+            transition: transform 0.5s, background-color 0.3s;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        .m-card.flipped { transform: rotateY(180deg); background: #fff; color: initial; border: 3px solid var(--primary); }
+        .m-card.matched { background: var(--success); color: white; cursor: default; transform: rotateY(180deg) scale(0.95); box-shadow: none; }
 
         /* OYUN 2: BALON PATLATMA */
-        #balloon-area { width: 100%; height: 300px; background: #e0f7fa; border-radius: 10px; position: relative; overflow: hidden; margin-top: 15px; }
-        .balloon { width: 40px; height: 55px; background: var(--danger); border-radius: 50% 50% 50% 50% / 40% 40% 60% 60%; position: absolute; cursor: pointer; animation: floatUp 3s linear infinite; }
-        @keyframes floatUp { from { bottom: -60px; } to { bottom: 320px; } }
+        #balloon-area { width: 100%; height: 350px; background: linear-gradient(to top, #e0f7fa, #fff); border-radius: 20px; position: relative; overflow: hidden; margin-top: 15px; border: 3px dashed #b2f5ea; }
+        .balloon { 
+            width: 45px; 
+            height: 60px; 
+            border-radius: 50% 50% 50% 50% / 40% 40% 60% 60%; 
+            position: absolute; 
+            cursor: pointer; 
+            transition: transform 0.1s ease-out, opacity 0.1s;
+        }
+        .balloon::after { content: "🎈"; font-size: 45px; position: absolute; top: -5px; left: -2px; }
+        .balloon.pop { transform: scale(0); opacity: 0; }
 
         /* OYUN 3: MATEMATİK SİHİRBAZI */
-        .math-box { font-size: 2.5rem; font-weight: bold; margin: 20px 0; color: var(--primary); }
-        .math-options { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; width: 100%; }
-        .math-btn { background: #f1f2f6; color: #2f3542; border: 2px solid #ced6e0; padding: 15px; font-size: 1.3rem; margin: 0; }
-        .math-btn:hover { background: var(--secondary); color: white; }
+        .math-box { font-size: 3rem; font-weight: bold; margin: 20px 0; color: var(--primary); letter-spacing: 2px; }
+        .math-options { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; width: 100%; }
+        .math-btn { background: #f8f9fa; color: #2d3436; border: 3px solid #dfe6e9; padding: 18px; font-size: 1.4rem; margin: 0; border-radius: 16px; box-shadow: 0 4px 6px rgba(0,0,0,0.02); }
+        .math-btn:hover { background: #f1f2f6; }
+        .math-btn.correct { background-color: var(--success) !important; color: white; border-color: var(--success); }
+        .math-btn.wrong { background-color: var(--danger) !important; color: white; border-color: var(--danger); }
 
         /* OYUN 4: RENK YAKALAMA */
-        #color-target { font-size: 1.5rem; font-weight: bold; margin-bottom: 15px; }
-        .color-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; width: 100%; }
-        .color-block { aspect-ratio: 1; border-radius: 10px; cursor: pointer; border: 3px solid transparent; }
+        #color-target { font-size: 2.2rem; font-weight: bold; margin-bottom: 20px; padding: 10px; background: #f8f9fa; border-radius: 12px; width: 100%; text-align: center; }
+        .color-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; width: 100%; }
+        .color-block { aspect-ratio: 1; border-radius: 16px; cursor: pointer; transition: transform 0.2s; box-shadow: 0 6px 12px rgba(0,0,0,0.1); }
+        .color-block:hover { transform: scale(1.05); }
 
         /* OYUN 5: HIZLI TIKLAMA */
-        #click-box { width: 80px; height: 80px; background: var(--warning); border-radius: 50%; position: absolute; cursor: pointer; display: none; }
+        #click-box { width: 70px; height: 70px; background: var(--warning); border-radius: 50%; position: absolute; cursor: pointer; display: none; transition: all 0.1s ease; box-shadow: 0 0 20px var(--warning); border: 4px solid white; }
 
         /* OYUN 6: KELİME AVCI */
-        #word-img { font-size: 4rem; margin: 10px 0; }
-        #word-clue { font-size: 1.5rem; letter-spacing: 5px; font-weight: bold; margin-bottom: 15px; }
+        #word-img { font-size: 5rem; margin: 15px 0; animation: bounce 2s infinite; }
+        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+        #word-clue { font-size: 1.8rem; letter-spacing: 8px; font-weight: bold; margin-bottom: 20px; color: #2d3436; }
 
-        /* KONFETİ TUVALİ */
+        /* KONFETİ */
         #confetti-canvas { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 999; display: none; }
     </style>
 </head>
@@ -135,98 +170,94 @@
 
     <canvas id="confetti-canvas"></canvas>
 
-    <h1>🏆 Çocuklar İçin Mini Olimpiyatlar 🏆</h1>
+    <h1>🏆 Süper Çocuk Olimpiyatları 🏆</h1>
 
     <div class="scoreboard">
-        <div>⭐ Toplam Puan: <span id="total-score">0</span></div>
+        <div>⭐ Puan: <span id="total-score">0</span></div>
         <div>🏅 Derece: <span id="rank">Yarışmacı</span></div>
     </div>
 
-    <!-- ANA MENÜ (İlk başta sadece bu görünür) -->
+    <!-- ANA MENÜ -->
     <div id="main-menu">
         <div class="game-card" onclick="startMemory()">
-            <div class="icon">🐱</div>
+            <div class="icon">🐼</div>
             <h3>Hafıza Kartları</h3>
-            <p>Eşini bul, hafızanı test et!</p>
+            <p>Sevimli hayvanları eşleştir, hafızanı canlandır!</p>
         </div>
         <div class="game-card" onclick="startBalloons()">
             <div class="icon">🎈</div>
-            <h3>Balon Patlatmaca</h3>
-            <p>Yukarı uçan balonları yakala!</p>
+            <h3>Balon Avcısı</h3>
+            <p>Rengarenk uçan balonları yakala ve patlat!</p>
         </div>
         <div class="game-card" onclick="startMath()">
-            <div class="icon">🪄</div>
+            <div class="icon">🔮</div>
             <h3>Matematik Sihirbazı</h3>
-            <p>Hızlıca topla, puanları kap!</p>
+            <p>Sihirli toplama ve çıkarmaları hızlıca çöz!</p>
         </div>
         <div class="game-card" onclick="startColorCatch()">
             <div class="icon">🎨</div>
-            <h3>Renk Avcısı</h3>
-            <p>Yazılan rengi hemen bul!</p>
+            <h3>Renk Dedektifi</h3>
+            <p>Dikkat et! İsmi yazan gizli rengi hemen bul!</p>
         </div>
         <div class="game-card" onclick="startFastClick()">
             <div class="icon">⚡</div>
-            <h3>Hızlı Tıkla</h3>
-            <p>Ekranda beliren daireyi kaçırma!</p>
+            <h3>Işık Hızı</h3>
+            <p>Kaçışan sihirli daireye olabildiğince hızlı dokun!</p>
         </div>
         <div class="game-card" onclick="startWordGame()">
-            <div class="icon">🍏</div>
-            <h3>Eksik Harf</h3>
-            <p>Resimdeki kelimeyi tamamla!</p>
+            <div class="icon">🚀</div>
+            <h3>Harf Tamamlama</h3>
+            <p>Kayıp harfi bul, kelimeyi harika bir şekilde tamamla!</p>
         </div>
     </div>
 
-    <!-- OYUN 1 EKRANI -->
+    <!-- OYUN EKRANLARI -->
     <div id="game-memory" class="screen">
-        <h2>🐱 Hafıza Kartları</h2>
+        <h2>🐼 Hafıza Kartları</h2>
         <div class="memory-board" id="m-board"></div>
         <button class="back-btn" onclick="toMenu()">Menüye Dön</button>
     </div>
 
-    <!-- OYUN 2 EKRANI -->
     <div id="game-balloons" class="screen">
-        <h2>🎈 Balonları Patlat (Süre: <span id="b-time">15</span>)</h2>
+        <h2>🎈 Balon Avı (Süre: <span id="b-time">15</span>)</h2>
         <div id="balloon-area"></div>
         <button class="back-btn" onclick="toMenu()">Menüye Dön</button>
     </div>
 
-    <!-- OYUN 3 EKRANI -->
     <div id="game-math" class="screen">
-        <h2>🪄 Doğru Sonucu Seç!</h2>
-        <div class="math-box" id="math-question">5 + 3 = ?</div>
+        <h2>🔮 Matematik Sihirbazı</h2>
+        <div class="math-box" id="math-question">0 + 0 = ?</div>
         <div class="math-options" id="math-opts"></div>
         <button class="back-btn" onclick="toMenu()">Menüye Dön</button>
     </div>
 
-    <!-- OYUN 4 EKRANI -->
     <div id="game-colors" class="screen">
-        <h2>🎨 İstenen Renge Tıkla</h2>
-        <div id="color-target">MAVİ</div>
+        <h2>🎨 Renk Dedektifi</h2>
+        <div id="color-target">Yükleniyor...</div>
         <div class="color-grid" id="color-box-grid"></div>
         <button class="back-btn" onclick="toMenu()">Menüye Dön</button>
     </div>
 
-    <!-- OYUN 5 EKRANI -->
     <div id="game-click" class="screen">
-        <h2>⚡ Sarı Daireye Tıkla (Kalan: <span id="c-time">10</span>)</h2>
-        <div id="click-area" style="width:100%; height:300px; background:#f1f2f6; position:relative; border-radius:10px; margin-top:15px; overflow:hidden;">
+        <h2>⚡ Işık Hızı (Süre: <span id="c-time">10</span>)</h2>
+        <div id="click-area" style="width:100%; height:320px; background:#f8f9fa; position:relative; border-radius:20px; margin-top:15px; overflow:hidden; border: 2px solid #e2e8f0;">
             <div id="click-box" onclick="hitClickBox()"></div>
         </div>
         <button class="back-btn" onclick="toMenu()">Menüye Dön</button>
     </div>
 
-    <!-- OYUN 6 EKRANI -->
     <div id="game-word" class="screen">
-        <h2>🍏 Boşluğu Tamamla</h2>
-        <div id="word-img">🍎</div>
-        <div id="word-clue">E_MA</div>
+        <h2>🚀 Harf Tamamlama</h2>
+        <div id="word-img">🚀</div>
+        <div id="word-clue">R_KET</div>
         <div class="math-options" id="word-opts"></div>
         <button class="back-btn" onclick="toMenu()">Menüye Dön</button>
     </div>
 
     <script>
         let totalScore = 0;
-        let gameInterval; // Zamanlayıcı kontrolü
+        let gameInterval;
+        let activeTimers = [];
 
         function addScore(points) {
             totalScore += points;
@@ -237,16 +268,16 @@
         function checkRank() {
             let rankElement = document.getElementById('rank');
             if(totalScore >= 150) {
-                rankElement.innerHTML = "🥇 BİRİNCİ!";
+                rankElement.innerHTML = "🥇 MUHTEŞEM BİRİNCİ!";
                 rankElement.style.color = "var(--warning)";
                 celebrate();
             } else if(totalScore >= 100) {
-                rankElement.innerHTML = "🥈 İKİNCİ!";
-                rankElement.style.color = "#7f8c8d";
+                rankElement.innerHTML = "🥈 HARİKA İKİNCİ!";
+                rankElement.style.color = "#95a5a6";
                 celebrate();
             } else if(totalScore >= 50) {
-                rankElement.innerHTML = "🥉 ÜÇÜNCÜ!";
-                rankElement.style.color = "#d35400";
+                rankElement.innerHTML = "🥉 SÜPER ÜÇÜNCÜ!";
+                rankElement.style.color = "#e67e22";
                 celebrate();
             } else {
                 rankElement.innerText = "Yarışmacı";
@@ -255,34 +286,30 @@
         }
 
         function showScreen(id) {
-            // Önce ana menüyü gizle
             document.getElementById('main-menu').style.display = 'none';
-            // Tüm ekranları kapat
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-            // Sadece istenen ekranı aç
             document.getElementById(id).classList.add('active');
         }
 
         function toMenu() {
-            // Aktif oyun sayaçlarını temizle
             clearInterval(gameInterval);
-            // Ekranları gizle
+            activeTimers.forEach(t => clearTimeout(t));
+            activeTimers = [];
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-            // Ana menüyü tekrar görünür yap
             document.getElementById('main-menu').style.display = 'grid';
         }
 
         // ========================================================
-        // OYUN 1: HAFIZA KARTLARI
+        // OYUN 1: 3D HAFIZA KARTLARI
         // ========================================================
-        let memEmojis = ['🐶', '🐶', '🐱', '🐱', '🐹', '🐹', '🦊', '🦊'];
+        let memEmojis = ['🐼', '🐼', '🦁', '🦁', '🐸', '🐸', '🐵', '🐵', '🦄', '🦄', '🐰', '🐰'];
         let flipped = [];
         function startMemory() {
             showScreen('game-memory');
             const board = document.getElementById('m-board');
             board.innerHTML = '';
             flipped = [];
-            memEmojis.sort(() => Math.random() - 0.5).forEach((emoji, i) => {
+            memEmojis.sort(() => Math.random() - 0.5).forEach(emoji => {
                 let card = document.createElement('div');
                 card.className = 'm-card';
                 card.dataset.emoji = emoji;
@@ -295,12 +322,12 @@
                         if(flipped[0].dataset.emoji === flipped[1].dataset.emoji) {
                             flipped.forEach(c => c.classList.add('matched'));
                             flipped = [];
-                            addScore(10);
+                            addScore(15);
                         } else {
-                            setTimeout(() => {
+                            activeTimers.push(setTimeout(() => {
                                 flipped.forEach(c => { c.classList.remove('flipped'); c.innerText = ''; });
                                 flipped = [];
-                            }, 800);
+                            }, 800));
                         }
                     }
                 };
@@ -309,7 +336,7 @@
         }
 
         // ========================================================
-        // OYUN 2: BALON PATLATMA
+        // OYUN 2: BALON AVCI (DALGALI UÇUŞ & PATLAMA)
         // ========================================================
         function startBalloons() {
             showScreen('game-balloons');
@@ -323,7 +350,6 @@
                 document.getElementById('b-time').innerText = timeLeft;
                 if(timeLeft <= 0) {
                     clearInterval(gameInterval);
-                    alert("Süre bitti!");
                     toMenu();
                 } else {
                     createBalloon();
@@ -335,19 +361,44 @@
             const area = document.getElementById('balloon-area');
             let b = document.createElement('div');
             b.className = 'balloon';
-            b.style.left = Math.random() * (area.clientWidth - 40) + 'px';
-            const colors = ['#d63031', '#0984e3', '#00b894', '#fdcb6e', '#e84393'];
-            b.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+            
+            let startX = Math.random() * (area.clientWidth - 50);
+            let currentY = -60;
+            let speed = Math.random() * 2 + 2;
+            let waveFrequency = Math.random() * 0.05 + 0.02;
+            let waveAmplitude = Math.random() * 20 + 10;
+            let angle = 0;
+
+            b.style.left = startX + 'px';
+            b.style.bottom = currentY + 'px';
+
             b.onclick = () => {
-                b.remove();
+                b.classList.add('pop');
                 addScore(5);
+                setTimeout(() => b.remove(), 100);
             };
             area.appendChild(b);
-            setTimeout(() => { if(b) b.remove(); }, 3000);
+
+            function animate() {
+                if(b.classList.contains('pop') || !b.parentNode) return;
+                currentY += speed;
+                angle += waveFrequency;
+                let xOffset = Math.sin(angle) * waveAmplitude;
+                
+                b.style.bottom = currentY + 'px';
+                b.style.transform = `translateX(${xOffset}px)`;
+
+                if(currentY < area.clientHeight + 60) {
+                    requestAnimationFrame(animate);
+                } else {
+                    b.remove();
+                }
+            }
+            requestAnimationFrame(animate);
         }
 
         // ========================================================
-        // OYUN 3: MATEMATİK SİHİRBAZI
+        // OYUN 3: MATEMATİK SİHİRBAZI (TOPLAMA & ÇIKARMA)
         // ========================================================
         function startMath() {
             showScreen('game-math');
@@ -355,12 +406,25 @@
         }
 
         function nextMathQuestion() {
-            let n1 = Math.floor(Math.random() * 10) + 1;
-            let n2 = Math.floor(Math.random() * 10) + 1;
-            let ans = n1 + n2;
-            document.getElementById('math-question').innerText = `${n1} + ${n2} = ?`;
+            let isAddition = Math.random() > 0.5;
+            let n1, n2, ans, sign;
+
+            if(isAddition) {
+                n1 = Math.floor(Math.random() * 10) + 1;
+                n2 = Math.floor(Math.random() * 10) + 1;
+                ans = n1 + n2;
+                sign = '+';
+            } else {
+                n1 = Math.floor(Math.random() * 12) + 5;
+                n2 = Math.floor(Math.random() * n1); // Negatif çıkmasın
+                ans = n1 - n2;
+                sign = '-';
+            }
+
+            document.getElementById('math-question').innerText = `${n1} ${sign} ${n2} = ?`;
             
-            let opts = [ans, ans + 2, ans - 1, ans + 1].filter((v, i, a) => a.indexOf(v) === i).slice(0,4);
+            let opts = [ans, ans + 2, ans - 1, ans + 3].filter((v, i, a) => a.indexOf(v) === i && v >= 0).slice(0,4);
+            while(opts.length < 4) { opts.push(ans + opts.length + 5); }
             opts.sort(() => Math.random() - 0.5);
 
             const optContainer = document.getElementById('math-opts');
@@ -370,18 +434,24 @@
                 btn.className = 'math-btn';
                 btn.innerText = o;
                 btn.onclick = () => {
-                    if(o === ans) { alert("Doğru! 🎉"); addScore(10); } 
-                    else { alert(`Yanlış, cevap ${ans} olmalıydı.`); }
-                    nextMathQuestion();
+                    // Butonları kilitle
+                    document.querySelectorAll('.math-btn').forEach(b => b.style.pointerEvents = 'none');
+                    if(o === ans) {
+                        btn.classList.add('correct');
+                        addScore(10);
+                    } else {
+                        btn.classList.add('wrong');
+                    }
+                    activeTimers.push(setTimeout(nextMathQuestion, 800));
                 };
                 optContainer.appendChild(btn);
             });
         }
 
         // ========================================================
-        // OYUN 4: RENK AVCISI
+        // OYUN 4: Gelişmiş Renk Dedektifi (Stroop Etkisi)
         // ========================================================
-        const colorMap = { 'KIRMIZI': 'red', 'MAVİ': 'blue', 'YEŞİL': 'green', 'SARI': 'yellow', 'TURUNCU': 'orange', 'MOR': 'purple' };
+        const colorMap = { 'KIRMIZI': '#d63031', 'MAVİ': '#0984e3', 'YEŞİL': '#00b894', 'SARI': '#f1c40f', 'TURUNCU': '#e67e22', 'MOR': '#6c5ce7' };
         function startColorCatch() {
             showScreen('game-colors');
             nextColorRound();
@@ -390,11 +460,12 @@
         function nextColorRound() {
             let keys = Object.keys(colorMap);
             let targetText = keys[Math.floor(Math.random() * keys.length)];
-            let targetDisplayColor = colorMap[keys[Math.floor(Math.random() * keys.length)]];
+            // Metin rengini yanıltıcı olması için kasıtlı olarak farklı seçiyoruz
+            let misleadingColor = colorMap[keys[Math.floor(Math.random() * keys.length)]];
             
             let targetEl = document.getElementById('color-target');
             targetEl.innerText = targetText;
-            targetEl.style.color = targetDisplayColor;
+            targetEl.style.color = misleadingColor;
 
             const grid = document.getElementById('color-box-grid');
             grid.innerHTML = '';
@@ -404,8 +475,7 @@
                 block.className = 'color-block';
                 block.style.backgroundColor = colorMap[k];
                 block.onclick = () => {
-                    if(k === targetText) { alert("Harika! 🎨"); addScore(10); }
-                    else { alert("Ayy, yanlış renk!"); }
+                    if(k === targetText) { addScore(10); }
                     nextColorRound();
                 };
                 grid.appendChild(block);
@@ -413,7 +483,7 @@
         }
 
         // ========================================================
-        // OYUN 5: HIZLI TIKLAMA
+        // OYUN 5: HIZLI TIKLAMA (DİNAMİK BOYUT)
         // ========================================================
         function startFastClick() {
             showScreen('game-click');
@@ -427,7 +497,6 @@
                 if(timeLeft <= 0) {
                     clearInterval(gameInterval);
                     document.getElementById('click-box').style.display = 'none';
-                    alert("Süre tamamlandı!");
                     toMenu();
                 } else {
                     moveClickBox();
@@ -438,8 +507,14 @@
         function moveClickBox() {
             let box = document.getElementById('click-box');
             let area = document.getElementById('click-area');
-            let maxW = area.clientWidth - 80;
-            let maxH = area.clientHeight - 80;
+            
+            // Rastgele boyut değişimi (Çocuklar için yakalaması eğlenceli dinamik yapı)
+            let randomSize = Math.floor(Math.random() * 40) + 40; // 40px - 80px arası
+            box.style.width = randomSize + 'px';
+            box.style.height = randomSize + 'px';
+
+            let maxW = area.clientWidth - randomSize;
+            let maxH = area.clientHeight - randomSize;
             box.style.left = Math.random() * maxW + 'px';
             box.style.top = Math.random() * maxH + 'px';
             box.style.display = 'block';
@@ -451,13 +526,14 @@
         }
 
         // ========================================================
-        // OYUN 6: EKSİK HARF
+        // OYUN 6: EKSİK HARF SÜPER LİSTE
         // ========================================================
         const words = [
-            { img: '🍎', clue: 'E _ M A', missing: 'L', opts: ['L', 'K', 'M', 'R'] },
-            { img: '🐶', clue: 'K Ö _ E K', missing: 'P', opts: ['P', 'B', 'V', 'M'] },
-            { img: '🚗', clue: 'A _ A B A', missing: 'R', opts: ['R', 'L', 'N', 'Z'] },
-            { img: '🐟', clue: 'B A _ I K', missing: 'L', opts: ['L', 'R', 'M', 'Y'] }
+            { img: '🚀', clue: 'R _ K E T', missing: 'O', opts: ['O', 'U', 'A', 'E'] },
+            { img: '🦁', clue: 'A S _ A N', missing: 'L', opts: ['L', 'R', 'M', 'N'] },
+            { img: '🍌', clue: 'M U _', missing: 'Z', opts: ['Z', 'S', 'B', 'N'] },
+            { img: '🚂', clue: 'T R E _', missing: 'N', opts: ['N', 'M', 'L', 'K'] },
+            { img: '🍦', clue: 'D O N D U R _ A', missing: 'M', opts: ['M', 'N', 'V', 'B'] }
         ];
         let wordIndex = 0;
         function startWordGame() {
@@ -474,13 +550,12 @@
             const optContainer = document.getElementById('word-opts');
             optContainer.innerHTML = '';
             
-            q.opts.forEach(o => {
+            q.opts.sort(() => Math.random() - 0.5).forEach(o => {
                 let btn = document.createElement('button');
                 btn.className = 'math-btn';
                 btn.innerText = o;
                 btn.onclick = () => {
-                    if(o === q.missing) { alert("Doğru harf! 🍏"); addScore(15); } 
-                    else { alert("O harf buraya uymadı."); }
+                    if(o === q.missing) { addScore(15); } 
                     wordIndex = (wordIndex + 1) % words.length;
                     showWordRound();
                 };
@@ -489,7 +564,7 @@
         }
 
         // ========================================================
-        // KONFETİ EFEKTİ SİSTEMİ
+        // GELİŞMİŞ KONFETİ SİSTEMİ
         // ========================================================
         const canvas = document.getElementById("confetti-canvas");
         const ctx = canvas.getContext("2d");
@@ -506,18 +581,18 @@
                 confettiPieces.push({
                     x: Math.random() * canvas.width,
                     y: Math.random() * canvas.height - canvas.height,
-                    r: Math.random() * 6 + 4,
+                    r: Math.random() * 6 + 5,
                     d: Math.random() * canvas.height,
-                    color: `rgba(${Math.floor(Math.random()*255)}, ${Math.floor(Math.random()*255)}, ${Math.floor(Math.random()*255)}, 1)`,
+                    color: `hsl(${Math.random() * 360}, 100%, 60%)`,
                     tilt: Math.random() * 10 - 5
                 });
             }
             if(confettiAnimation) cancelAnimationFrame(confettiAnimation);
             updateConfetti();
-            setTimeout(() => {
+            activeTimers.push(setTimeout(() => {
                 cancelAnimationFrame(confettiAnimation);
                 canvas.style.display = 'none';
-            }, 4000);
+            }, 4000));
         }
 
         function updateConfetti() {
