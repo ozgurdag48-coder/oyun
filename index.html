@@ -3,15 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Çocuklar İçin Süper Oyun Olimpiyatı</title>
+    <title>Matematiksel ve Görsel Muhakeme Olimpiyatı</title>
     <style>
         :root {
-            --primary: #6c5ce7;
-            --secondary: #a29bfe;
-            --success: #00b894;
-            --danger: #d63031;
-            --warning: #f1c40f;
-            --bg: #eef2f7;
+            --primary: #4a6fa5;
+            --secondary: #13c2c2;
+            --success: #389e0d;
+            --danger: #cf1322;
+            --warning: #faad14;
+            --bg: #f0f2f5;
             --card-bg: #ffffff;
         }
 
@@ -24,30 +24,29 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            overflow-x: hidden;
             user-select: none;
         }
 
-        h1 { color: var(--primary); text-shadow: 2px 2px 0px rgba(0,0,0,0.05); margin: 10px 0; text-align: center; font-size: 2.2rem; }
+        h1 { color: #262626; margin: 10px 0; text-align: center; font-size: 2rem; }
+        h2 { margin-top: 0; color: #434343; font-size: 1.4rem; }
 
-        /* SKOR TABLOSU */
         .scoreboard {
             background: white;
-            padding: 15px 30px;
-            border-radius: 50px;
-            box-shadow: 0 8px 20px rgba(108, 92, 231, 0.15);
+            padding: 12px 25px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
             display: flex;
             gap: 30px;
             margin-bottom: 25px;
             font-weight: bold;
-            font-size: 1.2rem;
-            border: 3px solid var(--secondary);
+            font-size: 1.1rem;
+            border-left: 5px solid var(--primary);
         }
 
         /* ANA MENÜ */
         #main-menu {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 20px;
             max-width: 950px;
             width: 100%;
@@ -55,112 +54,89 @@
 
         .game-card {
             background: var(--card-bg);
-            border-radius: 24px;
+            border-radius: 12px;
             padding: 25px;
             text-align: center;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
             cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            border: 2px solid transparent;
+            transition: all 0.2s ease;
+            border: 1px solid #f0f0f0;
         }
 
         .game-card:hover { 
-            transform: translateY(-8px) scale(1.02); 
-            box-shadow: 0 15px 30px rgba(108, 92, 231, 0.2);
-            border-color: var(--secondary);
+            transform: translateY(-4px); 
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+            border-color: var(--primary);
         }
-        .game-card .icon { font-size: 4rem; margin-bottom: 12px; display: inline-block; transition: transform 0.3s; }
-        .game-card:hover .icon { transform: scale(1.2) rotate(5deg); }
-        .game-card h3 { margin: 8px 0; color: #2d3436; font-size: 1.3rem; }
-        .game-card p { font-size: 0.95rem; color: #636e72; line-height: 1.4; }
+        .game-card .icon { font-size: 3rem; margin-bottom: 12px; }
+        .game-card h3 { margin: 8px 0; color: #262626; font-size: 1.2rem; }
+        .game-card p { font-size: 0.9rem; color: #8c8c8c; line-height: 1.4; }
 
         /* EKRANLAR */
         .screen { 
             display: none; 
             width: 100%; 
-            max-width: 520px; 
+            max-width: 550px; 
             background: white; 
             padding: 30px; 
-            border-radius: 32px; 
-            box-shadow: 0 15px 35px rgba(0,0,0,0.1); 
+            border-radius: 16px; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08); 
             text-align: center; 
-            position: relative;
         }
-        .screen.active { display: flex; flex-direction: column; align-items: center; animation: fadeIn 0.4s ease-out; }
+        .screen.active { display: flex; flex-direction: column; align-items: center; }
 
-        @keyframes fadeIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
-
-        button {
-            padding: 14px 28px;
-            font-size: 1.1rem;
-            background-color: var(--primary);
-            color: white;
-            border: none;
-            border-radius: 16px;
-            cursor: pointer;
+        /* ORTAK SEÇENEK BUTONLARI */
+        .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; width: 100%; margin-top: 20px; }
+        .opt-btn { 
+            background: #f5f5f5; 
+            color: #262626; 
+            border: 2px solid #d9d9d9; 
+            padding: 15px; 
+            font-size: 1.2rem; 
             font-weight: bold;
-            margin-top: 15px;
-            width: 100%;
+            border-radius: 8px; 
+            cursor: pointer;
             transition: all 0.2s;
-            box-shadow: 0 4px 10px rgba(108, 92, 231, 0.3);
         }
-        button:active { transform: scale(0.98); }
-        button.back-btn { background-color: #b2bec3; box-shadow: 0 4px 10px rgba(0,0,0,0.1); margin-top: 25px; }
-        button.back-btn:hover { background-color: #95a5a6; }
+        .opt-btn:hover { background: #e8e8e8; border-color: var(--primary); }
+        .opt-btn.correct { background-color: var(--success) !important; color: white; border-color: var(--success); }
+        .opt-btn.wrong { background-color: var(--danger) !important; color: white; border-color: var(--danger); }
 
-        /* OYUN 1: 3D HAFIZA KARTLARI */
-        .memory-board { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; width: 100%; margin-top: 15px; perspective: 1000px; }
-        .m-card { 
-            aspect-ratio: 1; 
-            background: var(--primary); 
-            border-radius: 14px; 
-            font-size: 2.2rem; 
+        button.back-btn { 
+            background-color: #8c8c8c; 
+            color: white; border: none; 
+            padding: 12px; border-radius: 8px; 
+            font-weight: bold; width: 100%; 
+            margin-top: 25px; cursor: pointer;
+        }
+
+        /* GÖRSEL MUHAKEME ALANLARI */
+        .display-area { 
+            width: 100%; 
+            min-height: 160px; 
+            background: #fafafa; 
+            border: 2px dashed #d9d9d9; 
+            border-radius: 8px; 
             display: flex; 
             justify-content: center; 
             align-items: center; 
-            color: transparent; 
-            cursor: pointer; 
-            transform-style: preserve-3d;
-            transition: transform 0.5s, background-color 0.3s;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            margin: 15px 0;
+            padding: 10px;
         }
-        .m-card.flipped { transform: rotateY(180deg); background: #fff; color: initial; border: 3px solid var(--primary); }
-        .m-card.matched { background: var(--success); color: white; cursor: default; transform: rotateY(180deg) scale(0.95); box-shadow: none; }
 
-        /* OYUN 2: BALON PATLATMA */
-        #balloon-area { width: 100%; height: 350px; background: linear-gradient(to top, #e0f7fa, #fff); border-radius: 20px; position: relative; overflow: hidden; margin-top: 15px; border: 3px dashed #b2f5ea; }
-        .balloon { 
-            width: 45px; 
-            height: 60px; 
-            border-radius: 50% 50% 50% 50% / 40% 40% 60% 60%; 
-            position: absolute; 
-            cursor: pointer; 
-            transition: transform 0.1s ease-out, opacity 0.1s;
-        }
-        .balloon::after { content: "🎈"; font-size: 45px; position: absolute; top: -5px; left: -2px; }
-        .balloon.pop { transform: scale(0); opacity: 0; }
+        /* MATRİS TASARIMI */
+        .matrix-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; width: 180px; }
+        .matrix-cell { width: 80px; height: 80px; background: white; border: 2px solid #bfbfbf; display: flex; justify-content: center; align-items: center; font-size: 2rem; }
 
-        /* OYUN 3: MATEMATİK SİHİRBAZI */
-        .math-box { font-size: 3rem; font-weight: bold; margin: 20px 0; color: var(--primary); letter-spacing: 2px; }
-        .math-options { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; width: 100%; }
-        .math-btn { background: #f8f9fa; color: #2d3436; border: 3px solid #dfe6e9; padding: 18px; font-size: 1.4rem; margin: 0; border-radius: 16px; box-shadow: 0 4px 6px rgba(0,0,0,0.02); }
-        .math-btn:hover { background: #f1f2f6; }
-        .math-btn.correct { background-color: var(--success) !important; color: white; border-color: var(--success); }
-        .math-btn.wrong { background-color: var(--danger) !important; color: white; border-color: var(--danger); }
+        /* TERAZİ TASARIMI */
+        .scale-container { display: flex; align-items: flex-end; width: 100%; justify-content: space-around; height: 120px; position: relative; }
+        .scale-pan { width: 120px; border-top: 4px solid #595959; text-align: center; padding-top: 8px; font-size: 1.5rem; }
+        .scale-base { position: absolute; bottom: 0; width: 10px; height: 60px; background: #595959; left: calc(50% - 5px); }
 
-        /* OYUN 4: RENK YAKALAMA */
-        #color-target { font-size: 2.2rem; font-weight: bold; margin-bottom: 20px; padding: 10px; background: #f8f9fa; border-radius: 12px; width: 100%; text-align: center; }
-        .color-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; width: 100%; }
-        .color-block { aspect-ratio: 1; border-radius: 16px; cursor: pointer; transition: transform 0.2s; box-shadow: 0 6px 12px rgba(0,0,0,0.1); }
-        .color-block:hover { transform: scale(1.05); }
-
-        /* OYUN 5: HIZLI TIKLAMA */
-        #click-box { width: 70px; height: 70px; background: var(--warning); border-radius: 50%; position: absolute; cursor: pointer; display: none; transition: all 0.1s ease; box-shadow: 0 0 20px var(--warning); border: 4px solid white; }
-
-        /* OYUN 6: KELİME AVCI */
-        #word-img { font-size: 5rem; margin: 15px 0; animation: bounce 2s infinite; }
-        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
-        #word-clue { font-size: 1.8rem; letter-spacing: 8px; font-weight: bold; margin-bottom: 20px; color: #2d3436; }
+        /* SİMETRİ TASARIMI */
+        .symmetry-box { display: flex; gap: 20px; align-items: center; width: 100%; justify-content: center; }
+        .sym-side { width: 120px; height: 120px; border: 2px solid #595959; position: relative; background: white; }
+        .sym-line { width: 2px; height: 140px; background: var(--danger); border-style: dashed; }
 
         /* KONFETİ */
         #confetti-canvas { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 999; display: none; }
@@ -170,119 +146,124 @@
 
     <canvas id="confetti-canvas"></canvas>
 
-    <h1>🏆 Süper Çocuk Olimpiyatları 🏆</h1>
+    <h1>🧠 Matematiksel ve Görsel Muhakeme Olimpiyatı </h1>
 
     <div class="scoreboard">
-        <div>⭐ Puan: <span id="total-score">0</span></div>
-        <div>🏅 Derece: <span id="rank">Yarışmacı</span></div>
+        <div>Zeka Puanı (IQ): <span id="total-score">0</span></div>
+        <div>Unvan: <span id="rank">Analist</span></div>
     </div>
 
     <!-- ANA MENÜ -->
     <div id="main-menu">
-        <div class="game-card" onclick="startMemory()">
-            <div class="icon">🐼</div>
-            <h3>Hafıza Kartları</h3>
-            <p>Sevimli hayvanları eşleştir, hafızanı canlandır!</p>
+        <div class="game-card" onclick="startPatterns()">
+            <div class="icon">🔢</div>
+            <h3>Sayı Dizileri</h3>
+            <p>Sayılar arasındaki gizli matematiksel kuralı çöz, diziyi tamamla.</p>
         </div>
-        <div class="game-card" onclick="startBalloons()">
-            <div class="icon">🎈</div>
-            <h3>Balon Avcısı</h3>
-            <p>Rengarenk uçan balonları yakala ve patlat!</p>
+        <div class="game-card" onclick="startMatrix()">
+            <div class="icon">🧩</div>
+            <h3>Matris Tamamlama</h3>
+            <p>Şekiller arasındaki mantıksal değişimi kavra, boşluğu doldur.</p>
         </div>
-        <div class="game-card" onclick="startMath()">
-            <div class="icon">🔮</div>
-            <h3>Matematik Sihirbazı</h3>
-            <p>Sihirli toplama ve çıkarmaları hızlıca çöz!</p>
+        <div class="game-card" onclick="startScales()">
+            <div class="icon">⚖️</div>
+            <h3>Kütle Dengesi (Terazi)</h3>
+            <p>Görsel denklemleri analiz et, teraziyi kusursuz dengeye getir.</p>
         </div>
-        <div class="game-card" onclick="startColorCatch()">
-            <div class="icon">🎨</div>
-            <h3>Renk Dedektifi</h3>
-            <p>Dikkat et! İsmi yazan gizli rengi hemen bul!</p>
+        <div class="game-card" onclick="startCubes()">
+            <div class="icon">📦</div>
+            <h3>Küp Sayma</h3>
+            <p>Üç boyutlu uzayda arkada gizlenen küpleri zihninde canlandırıp say.</p>
         </div>
-        <div class="game-card" onclick="startFastClick()">
-            <div class="icon">⚡</div>
-            <h3>Işık Hızı</h3>
-            <p>Kaçışan sihirli daireye olabildiğince hızlı dokun!</p>
+        <div class="game-card" onclick="startSymmetry()">
+            <div class="icon">🪞</div>
+            <h3>Simetri Dedektifi</h3>
+            <p>Kırmızı eksene göre şeklin ayna yansımasını muhakeme et.</p>
         </div>
-        <div class="game-card" onclick="startWordGame()">
-            <div class="icon">🚀</div>
-            <h3>Harf Tamamlama</h3>
-            <p>Kayıp harfi bul, kelimeyi harika bir şekilde tamamla!</p>
+        <div class="game-card" onclick="startTargetSum()">
+            <div class="icon">🎯</div>
+            <h3>Hedef Toplamı</h3>
+            <p>Ekranda verilen hedef sayıya ulaşmak için doğru iki sayıyı eşle.</p>
         </div>
     </div>
 
-    <!-- OYUN EKRANLARI -->
-    <div id="game-memory" class="screen">
-        <h2>🐼 Hafıza Kartları</h2>
-        <div class="memory-board" id="m-board"></div>
+    <!-- 1. SAYI DİZİLERİ -->
+    <div id="game-patterns" class="screen">
+        <h2>🔢 Eksik Sayıyı Bul (Örüntü)</h2>
+        <div class="display-area" id="pattern-display" style="font-size: 2rem; font-weight: bold; letter-spacing: 5px; color: var(--primary);"></div>
+        <div class="options-grid" id="pattern-opts"></div>
         <button class="back-btn" onclick="toMenu()">Menüye Dön</button>
     </div>
 
-    <div id="game-balloons" class="screen">
-        <h2>🎈 Balon Avı (Süre: <span id="b-time">15</span>)</h2>
-        <div id="balloon-area"></div>
-        <button class="back-btn" onclick="toMenu()">Menüye Dön</button>
-    </div>
-
-    <div id="game-math" class="screen">
-        <h2>🔮 Matematik Sihirbazı</h2>
-        <div class="math-box" id="math-question">0 + 0 = ?</div>
-        <div class="math-options" id="math-opts"></div>
-        <button class="back-btn" onclick="toMenu()">Menüye Dön</button>
-    </div>
-
-    <div id="game-colors" class="screen">
-        <h2>🎨 Renk Dedektifi</h2>
-        <div id="color-target">Yükleniyor...</div>
-        <div class="color-grid" id="color-box-grid"></div>
-        <button class="back-btn" onclick="toMenu()">Menüye Dön</button>
-    </div>
-
-    <div id="game-click" class="screen">
-        <h2>⚡ Işık Hızı (Süre: <span id="c-time">10</span>)</h2>
-        <div id="click-area" style="width:100%; height:320px; background:#f8f9fa; position:relative; border-radius:20px; margin-top:15px; overflow:hidden; border: 2px solid #e2e8f0;">
-            <div id="click-box" onclick="hitClickBox()"></div>
+    <!-- 2. MATRİS TAMAMLAMA -->
+    <div id="game-matrix" class="screen">
+        <h2>🧩 Mantıksal Şekil Matrisi</h2>
+        <div class="display-area">
+            <div class="matrix-grid" id="matrix-container"></div>
         </div>
+        <div class="options-grid" id="matrix-opts"></div>
         <button class="back-btn" onclick="toMenu()">Menüye Dön</button>
     </div>
 
-    <div id="game-word" class="screen">
-        <h2>🚀 Harf Tamamlama</h2>
-        <div id="word-img">🚀</div>
-        <div id="word-clue">R_KET</div>
-        <div class="math-options" id="word-opts"></div>
+    <!-- 3. KÜTLE DENGESİ -->
+    <div id="game-scales" class="screen">
+        <h2>⚖️ Teraziyi Dengele</h2>
+        <div class="display-area" style="min-height:180px;">
+            <div class="scale-container">
+                <div class="scale-pan" id="scale-left"></div>
+                <div class="scale-base"></div>
+                <div class="scale-pan" id="scale-right">?</div>
+            </div>
+        </div>
+        <div class="options-grid" id="scale-opts"></div>
+        <button class="back-btn" onclick="toMenu()">Menüye Dön</button>
+    </div>
+
+    <!-- 4. KÜP SAYMA -->
+    <div id="game-cubes" class="screen">
+        <h2>📦 Toplam Küp Sayısı Kaçtır?</h2>
+        <div class="display-area" style="min-height:200px;">
+            <canvas id="cube-canvas" width="250" height="180"></canvas>
+        </div>
+        <div class="options-grid" id="cube-opts"></div>
+        <button class="back-btn" onclick="toMenu()">Menüye Dön</button>
+    </div>
+
+    <!-- 5. SİMETRİ DEDEKTİFİ -->
+    <div id="game-symmetry" class="screen">
+        <h2>🪞 Şeklin Simetriğini Seç</h2>
+        <div class="display-area">
+            <div class="symmetry-box">
+                <canvas id="sym-source" width="100" height="100" style="border:1px solid #ccc;"></canvas>
+                <div class="sym-line"></div>
+                <div style="width:100px; height:100px; border:2px dashed #999; display:flex; justify-content:center; align-items:center; font-size:2rem; color:#999;">?</div>
+            </div>
+        </div>
+        <div class="options-grid" id="sym-opts"></div>
+        <button class="back-btn" onclick="toMenu()">Menüye Dön</button>
+    </div>
+
+    <!-- 6. HEDEF TOPLAMI -->
+    <div id="game-target" class="screen">
+        <h2>🎯 Hangi İkisinin Toplamı: <span id="target-num" style="color:var(--danger)">0</span>?</h2>
+        <div class="options-grid" id="target-nums-grid" style="grid-template-columns: repeat(3, 1fr);"></div>
         <button class="back-btn" onclick="toMenu()">Menüye Dön</button>
     </div>
 
     <script>
-        let totalScore = 0;
-        let gameInterval;
+        let score = 0;
         let activeTimers = [];
 
         function addScore(points) {
-            totalScore += points;
-            document.getElementById('total-score').innerText = totalScore;
-            checkRank();
-        }
-
-        function checkRank() {
-            let rankElement = document.getElementById('rank');
-            if(totalScore >= 150) {
-                rankElement.innerHTML = "🥇 MUHTEŞEM BİRİNCİ!";
-                rankElement.style.color = "var(--warning)";
-                celebrate();
-            } else if(totalScore >= 100) {
-                rankElement.innerHTML = "🥈 HARİKA İKİNCİ!";
-                rankElement.style.color = "#95a5a6";
-                celebrate();
-            } else if(totalScore >= 50) {
-                rankElement.innerHTML = "🥉 SÜPER ÜÇÜNCÜ!";
-                rankElement.style.color = "#e67e22";
-                celebrate();
-            } else {
-                rankElement.innerText = "Yarışmacı";
-                rankElement.style.color = "black";
-            }
+            score += points;
+            document.getElementById('total-score').innerText = score;
+            
+            let rank = "Analist";
+            if(score >= 120) rank = "Dahi 🧠";
+            else if(score >= 80) rank = "Stratejist 🔍";
+            else if(score >= 40) rank = "Mühendis 🛠️";
+            document.getElementById('rank').innerText = rank;
+            if(score % 50 === 0) celebrate();
         }
 
         function showScreen(id) {
@@ -292,279 +273,330 @@
         }
 
         function toMenu() {
-            clearInterval(gameInterval);
             activeTimers.forEach(t => clearTimeout(t));
-            activeTimers = [];
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
             document.getElementById('main-menu').style.display = 'grid';
         }
 
+        function lockOptions(className) {
+            document.querySelectorAll('.'+className).forEach(b => b.style.pointerEvents = 'none');
+        }
+
         // ========================================================
-        // OYUN 1: 3D HAFIZA KARTLARI
+        // 1. SAYI DİZİLERİ (MATEMATİKSEL MUHAKEME)
         // ========================================================
-        let memEmojis = ['🐼', '🐼', '🦁', '🦁', '🐸', '🐸', '🐵', '🐵', '🦄', '🦄', '🐰', '🐰'];
-        let flipped = [];
-        function startMemory() {
-            showScreen('game-memory');
-            const board = document.getElementById('m-board');
-            board.innerHTML = '';
-            flipped = [];
-            memEmojis.sort(() => Math.random() - 0.5).forEach(emoji => {
-                let card = document.createElement('div');
-                card.className = 'm-card';
-                card.dataset.emoji = emoji;
-                card.onclick = () => {
-                    if(card.classList.contains('flipped') || card.classList.contains('matched') || flipped.length >= 2) return;
-                    card.classList.add('flipped');
-                    card.innerText = emoji;
-                    flipped.push(card);
-                    if(flipped.length === 2) {
-                        if(flipped[0].dataset.emoji === flipped[1].dataset.emoji) {
-                            flipped.forEach(c => c.classList.add('matched'));
-                            flipped = [];
+        const patternsData = [
+            { seq: "2 - 4 - 8 - 16 - ?", ans: 32, opts: [24, 30, 32, 64] },
+            { seq: "5 - 8 - 11 - 14 - ?", ans: 17, opts: [15, 16, 17, 20] },
+            { seq: "20 - 17 - 14 - 11 - ?", ans: 8, opts: [9, 8, 7, 6] },
+            { seq: "1 - 3 - 9 - 27 - ?", ans: 81, opts: [36, 54, 81, 90] },
+            { seq: "2 - 3 - 5 - 8 - ?", ans: 12, opts: [10, 11, 12, 13] }
+        ];
+        let currentPatternIdx = 0;
+
+        function startPatterns() {
+            showScreen('game-patterns');
+            currentPatternIdx = Math.floor(Math.random() * patternsData.length);
+            let q = patternsData[currentPatternIdx];
+            document.getElementById('pattern-display').innerText = q.seq;
+            
+            let container = document.getElementById('pattern-opts');
+            container.innerHTML = '';
+            q.opts.forEach(o => {
+                let btn = document.createElement('button');
+                btn.className = 'opt-btn pattern-btn';
+                btn.innerText = o;
+                btn.onclick = () => {
+                    lockOptions('pattern-btn');
+                    if(o === q.ans) { btn.classList.add('correct'); addScore(10); }
+                    else { btn.classList.add('wrong'); }
+                    activeTimers.push(setTimeout(startPatterns, 1000));
+                };
+                container.appendChild(btn);
+            });
+        }
+
+        // ========================================================
+        // 2. MATRİS TAMAMLAMA (GÖRSEL MUHAKEME)
+        // ========================================================
+        const matrixData = [
+            { cells: ['🔴', '🟥', '🔵', '?'], ans: '🔷', opts: ['🔷', '🔺', '🟡', '⬛'] }, // Yuvarlak köşeliye dönüyor
+            { cells: ['⭐', '⭐⭐', '🎈', '?'], ans: '🎈🎈', opts: ['🎈🎈', '🎈🎈🎈', '⭐', '❌'] }, // Miktar artıyor
+            { cells: ['🍏', '🍎', '🥦', '?'], ans: '🥕', opts: ['🥕', '🐟', '✈️', '🍏'] }, // Meyve meyve, sebze sebze
+            { cells: ['🔼', '🔽', '◀️', '?'], ans: '▶️', opts: ['▶️', '🔼', '🔽', '🔄'] } // Yön çevirme
+        ];
+
+        function startMatrix() {
+            showScreen('game-matrix');
+            let q = matrixData[Math.floor(Math.random() * matrixData.length)];
+            let mContainer = document.getElementById('matrix-container');
+            mContainer.innerHTML = '';
+            
+            q.cells.forEach(c => {
+                let cell = document.createElement('div');
+                cell.className = 'matrix-cell';
+                cell.innerText = c;
+                mContainer.appendChild(cell);
+            });
+
+            let optsContainer = document.getElementById('matrix-opts');
+            optsContainer.innerHTML = '';
+            q.opts.forEach(o => {
+                let btn = document.createElement('button');
+                btn.className = 'opt-btn m-btn';
+                btn.innerText = o;
+                btn.onclick = () => {
+                    lockOptions('m-btn');
+                    if(o === q.ans) { btn.classList.add('correct'); addScore(15); }
+                    else { btn.classList.add('wrong'); }
+                    activeTimers.push(setTimeout(startMatrix, 1000));
+                };
+                optsContainer.appendChild(btn);
+            });
+        }
+
+        // ========================================================
+        // 3. KÜTLE DENGESİ (MATEMATİKSEL MUHAKEME)
+        // ========================================================
+        const scalesData = [
+            { left: "🦊 + 🦊", rightAns: "🦁", textRight: "?", ans: "🦁", opts: ["🦁", "🦊", "🦊+🦁", "🐱"] }, // 1 Aslan = 2 Tilki
+            { left: "💎 + 💎 + 💎", rightAns: "👑", textRight: "?", ans: "👑", opts: ["👑", "💎", "👑+💎", "💰"] },
+            { left: "🍎 + 🍎", rightAns: "🍏 + 🍏 + 🍏 + 🍏", textRight: "🍎 = ?", ans: "🍏+🍏", opts: ["🍏+🍏", "🍏", "🍏+🍏+🍏", "🍎"] }
+        ];
+
+        function startScales() {
+            showScreen('game-scales');
+            let q = scalesData[Math.floor(Math.random() * scalesData.length)];
+            document.getElementById('scale-left').innerText = q.left;
+            document.getElementById('scale-right').innerText = q.textRight;
+
+            let optsContainer = document.getElementById('scale-opts');
+            optsContainer.innerHTML = '';
+            q.opts.forEach(o => {
+                let btn = document.createElement('button');
+                btn.className = 'opt-btn s-btn';
+                btn.innerText = o;
+                btn.onclick = () => {
+                    lockOptions('s-btn');
+                    if(o === q.ans) { btn.classList.add('correct'); addScore(15); }
+                    else { btn.classList.add('wrong'); }
+                    activeTimers.push(setTimeout(startScales, 1000));
+                };
+                optsContainer.appendChild(btn);
+            });
+        }
+
+        // ========================================================
+        // 4. KÜP SAYMA (UZAMSAL-GÖRSEL MUHAKEME)
+        // ========================================================
+        function startCubes() {
+            showScreen('game-cubes');
+            let canvas = document.getElementById('cube-canvas');
+            let ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Rastgele 3 farklı küp yapısı mimarisi oluşturma
+            let setup = Math.floor(Math.random() * 3);
+            let totalCubes = 0;
+            
+            function drawIsometricCube(x, y, size) {
+                // Ön yüz
+                ctx.fillStyle = "#4a6fa5";
+                ctx.beginPath();
+                ctx.moveTo(x, y);
+                ctx.lineTo(x + size, y + size/2);
+                ctx.lineTo(x + size, y + size * 1.5);
+                ctx.lineTo(x, y + size);
+                ctx.closePath();
+                ctx.fill(); ctx.stroke();
+
+                // Sağ yüz
+                ctx.fillStyle = "#365584";
+                ctx.beginPath();
+                ctx.moveTo(x + size, y + size/2);
+                ctx.lineTo(x + size * 2, y);
+                ctx.lineTo(x + size * 2, y + size);
+                ctx.lineTo(x + size, y + size * 1.5);
+                ctx.closePath();
+                ctx.fill(); ctx.stroke();
+
+                // Üst yüz
+                ctx.fillStyle = "#638ecb";
+                ctx.beginPath();
+                ctx.moveTo(x, y);
+                ctx.lineTo(x + size, y - size/2);
+                ctx.lineTo(x + size * 2, y);
+                ctx.lineTo(x + size, y + size/2);
+                ctx.closePath();
+                ctx.fill(); ctx.stroke();
+            }
+
+            ctx.strokeStyle = "#ffffff";
+            ctx.lineWidth = 1.5;
+
+            if(setup === 0) {
+                // Zemin: 2x2, Üstte 1 tane (Toplam 5 küp)
+                drawIsometricCube(60, 100, 30);
+                drawIsometricCube(120, 70, 30);
+                drawIsometricCube(120, 130, 30); // Ön sıra
+                drawIsometricCube(120, 70 - 30, 30); // 2. kat arka üstü
+                totalCubes = 5; // (Arka tabandaki gizli küp dahil)
+            } else if (setup === 1) {
+                // Merdiven yapısı: Arka 3 kat, orta 2 kat, ön 1 kat (Toplam 6 küp)
+                drawIsometricCube(50, 110, 25);
+                drawIsometricCube(50, 110 - 25, 25);
+                drawIsometricCube(50, 110 - 50, 25); // En arka kule
+                drawIsometricCube(100, 110, 25);
+                drawIsometricCube(100, 110 - 25, 25); // Orta kule
+                drawIsometricCube(150, 110, 25); // Ön kule
+                totalCubes = 6;
+            } else {
+                // Yan yana sütunlar (Toplam 4 küp)
+                drawIsometricCube(60, 90, 30);
+                drawIsometricCube(60, 90 - 30, 30);
+                drawIsometricCube(120, 110, 30);
+                drawIsometricCube(120, 110 - 30, 30);
+                totalCubes = 4;
+            }
+
+            let opts = [totalCubes, totalCubes+1, totalCubes-1, totalCubes+2].sort(() => Math.random() - 0.5);
+            let optsContainer = document.getElementById('cube-opts');
+            optsContainer.innerHTML = '';
+            opts.forEach(o => {
+                let btn = document.createElement('button');
+                btn.className = 'opt-btn c-btn';
+                btn.innerText = o;
+                btn.onclick = () => {
+                    lockOptions('c-btn');
+                    if(o === totalCubes) { btn.classList.add('correct'); addScore(20); }
+                    else { btn.classList.add('wrong'); }
+                    activeTimers.push(setTimeout(startCubes, 1200));
+                };
+                optsContainer.appendChild(btn);
+            });
+        }
+
+        // ========================================================
+        // 5. SİMETRİ DEDEKTİFİ (GÖRSEL MUHAKEME)
+        // ========================================================
+        function drawSymmetryShape(ctx, type) {
+            ctx.clearRect(0,0,100,100);
+            ctx.fillStyle = "var(--primary)";
+            ctx.strokeStyle = "#333";
+            ctx.lineWidth = 2;
+
+            if(type === 'source') {
+                ctx.beginPath(); ctx.moveTo(20, 20); ctx.lineTo(80, 20); ctx.lineTo(20, 80); ctx.closePath(); ctx.fill(); ctx.stroke();
+                ctx.fillStyle = "var(--warning)";
+                ctx.fillRect(20, 20, 20, 20);
+            } else if (type === 'correct') {
+                // Tam dikey ayna simetriği (Sol-sağ ters yüz)
+                ctx.beginPath(); ctx.moveTo(80, 20); ctx.lineTo(20, 20); ctx.lineTo(80, 80); ctx.closePath(); ctx.fill(); ctx.stroke();
+                ctx.fillStyle = "var(--warning)";
+                ctx.fillRect(60, 20, 20, 20);
+            } else if (type === 'wrong1') {
+                // Aşağı doğru ters yüz (Yatay simetri - Yanlış)
+                ctx.beginPath(); ctx.moveTo(20, 80); ctx.lineTo(80, 80); ctx.lineTo(20, 20); ctx.closePath(); ctx.fill(); ctx.stroke();
+                ctx.fillStyle = "var(--warning)";
+                ctx.fillRect(20, 60, 20, 20);
+            } else {
+                // Aynısı (Değişmemiş - Yanlış)
+                ctx.beginPath(); ctx.moveTo(20, 20); ctx.lineTo(80, 20); ctx.lineTo(20, 80); ctx.closePath(); ctx.fill(); ctx.stroke();
+                ctx.fillStyle = "var(--warning)";
+                ctx.fillRect(20, 20, 20, 20);
+            }
+        }
+
+        function startSymmetry() {
+            showScreen('game-symmetry');
+            let srcCanvas = document.getElementById('sym-source');
+            drawSymmetryShape(srcCanvas.getContext('2d'), 'source');
+
+            let options = [
+                { id: 'A', type: 'correct' },
+                { id: 'B', type: 'wrong1' },
+                { id: 'C', type: 'wrong2' }
+            ].sort(() => Math.random() - 0.5);
+
+            let optsContainer = document.getElementById('sym-opts');
+            optsContainer.innerHTML = '';
+
+            options.forEach(opt => {
+                let div = document.createElement('div');
+                div.style.display = 'flex';
+                div.style.flexDirection = 'column';
+                div.style.alignItems = 'center';
+
+                let can = document.createElement('canvas');
+                can.width = 70; can.height = 70;
+                can.style.border = "1px solid #ccc";
+                can.style.cursor = "pointer";
+                can.style.background = "white";
+                can.style.borderRadius = "6px";
+                drawSymmetryShape(can.getContext('2d'), opt.type);
+
+                can.onclick = () => {
+                    can.onclick = null;
+                    if(opt.type === 'correct') { can.style.border = "3px solid var(--success)"; addScore(20); }
+                    else { can.style.border = "3px solid var(--danger)"; }
+                    activeTimers.push(setTimeout(startSymmetry, 1200));
+                };
+
+                div.appendChild(can);
+                optsContainer.appendChild(div);
+            });
+        }
+
+        // ========================================================
+        // 6. HEDEF TOPLAMI (MATEMATİKSEL MUHAKEME)
+        // ========================================================
+        function startTargetSum() {
+            showScreen('game-target');
+            let target = Math.floor(Math.random() * 15) + 10; // 10-25 arası hedef
+            document.getElementById('target-num').innerText = target;
+
+            let num1 = Math.floor(Math.random() * (target - 2)) + 1;
+            let num2 = target - num1;
+
+            let pool = [num1, num2];
+            while(pool.length < 6) {
+                let rand = Math.floor(Math.random() * 20) + 1;
+                if(!pool.includes(rand) && rand !== num1 && rand !== num2) pool.push(rand);
+            }
+            pool.sort(() => Math.random() - 0.5);
+
+            let grid = document.getElementById('target-nums-grid');
+            grid.innerHTML = '';
+            
+            let selectedBtns = [];
+            pool.forEach(val => {
+                let btn = document.createElement('button');
+                btn.className = 'opt-btn t-btn';
+                btn.style.fontSize = "1.5rem";
+                btn.innerText = val;
+                btn.onclick = () => {
+                    if(btn.classList.contains('correct')) return;
+                    btn.classList.add('correct');
+                    selectedBtns.push({el: btn, val: val});
+
+                    if(selectedBtns.length === 2) {
+                        lockOptions('t-btn');
+                        let sum = selectedBtns[0].val + selectedBtns[1].val;
+                        if(sum === target) {
                             addScore(15);
+                            activeTimers.push(setTimeout(startTargetSum, 1000));
                         } else {
-                            activeTimers.push(setTimeout(() => {
-                                flipped.forEach(c => { c.classList.remove('flipped'); c.innerText = ''; });
-                                flipped = [];
-                            }, 800));
+                            selectedBtns.forEach(b => { b.el.classList.remove('correct'); b.el.classList.add('wrong'); });
+                            activeTimers.push(setTimeout(startTargetSum, 1000));
                         }
                     }
                 };
-                board.appendChild(card);
+                grid.appendChild(btn);
             });
         }
 
         // ========================================================
-        // OYUN 2: BALON AVCI (DALGALI UÇUŞ & PATLAMA)
-        // ========================================================
-        function startBalloons() {
-            showScreen('game-balloons');
-            const area = document.getElementById('balloon-area');
-            area.innerHTML = '';
-            let timeLeft = 15;
-            document.getElementById('b-time').innerText = timeLeft;
-
-            gameInterval = setInterval(() => {
-                timeLeft--;
-                document.getElementById('b-time').innerText = timeLeft;
-                if(timeLeft <= 0) {
-                    clearInterval(gameInterval);
-                    toMenu();
-                } else {
-                    createBalloon();
-                }
-            }, 1000);
-        }
-
-        function createBalloon() {
-            const area = document.getElementById('balloon-area');
-            let b = document.createElement('div');
-            b.className = 'balloon';
-            
-            let startX = Math.random() * (area.clientWidth - 50);
-            let currentY = -60;
-            let speed = Math.random() * 2 + 2;
-            let waveFrequency = Math.random() * 0.05 + 0.02;
-            let waveAmplitude = Math.random() * 20 + 10;
-            let angle = 0;
-
-            b.style.left = startX + 'px';
-            b.style.bottom = currentY + 'px';
-
-            b.onclick = () => {
-                b.classList.add('pop');
-                addScore(5);
-                setTimeout(() => b.remove(), 100);
-            };
-            area.appendChild(b);
-
-            function animate() {
-                if(b.classList.contains('pop') || !b.parentNode) return;
-                currentY += speed;
-                angle += waveFrequency;
-                let xOffset = Math.sin(angle) * waveAmplitude;
-                
-                b.style.bottom = currentY + 'px';
-                b.style.transform = `translateX(${xOffset}px)`;
-
-                if(currentY < area.clientHeight + 60) {
-                    requestAnimationFrame(animate);
-                } else {
-                    b.remove();
-                }
-            }
-            requestAnimationFrame(animate);
-        }
-
-        // ========================================================
-        // OYUN 3: MATEMATİK SİHİRBAZI (TOPLAMA & ÇIKARMA)
-        // ========================================================
-        function startMath() {
-            showScreen('game-math');
-            nextMathQuestion();
-        }
-
-        function nextMathQuestion() {
-            let isAddition = Math.random() > 0.5;
-            let n1, n2, ans, sign;
-
-            if(isAddition) {
-                n1 = Math.floor(Math.random() * 10) + 1;
-                n2 = Math.floor(Math.random() * 10) + 1;
-                ans = n1 + n2;
-                sign = '+';
-            } else {
-                n1 = Math.floor(Math.random() * 12) + 5;
-                n2 = Math.floor(Math.random() * n1); // Negatif çıkmasın
-                ans = n1 - n2;
-                sign = '-';
-            }
-
-            document.getElementById('math-question').innerText = `${n1} ${sign} ${n2} = ?`;
-            
-            let opts = [ans, ans + 2, ans - 1, ans + 3].filter((v, i, a) => a.indexOf(v) === i && v >= 0).slice(0,4);
-            while(opts.length < 4) { opts.push(ans + opts.length + 5); }
-            opts.sort(() => Math.random() - 0.5);
-
-            const optContainer = document.getElementById('math-opts');
-            optContainer.innerHTML = '';
-            opts.forEach(o => {
-                let btn = document.createElement('button');
-                btn.className = 'math-btn';
-                btn.innerText = o;
-                btn.onclick = () => {
-                    // Butonları kilitle
-                    document.querySelectorAll('.math-btn').forEach(b => b.style.pointerEvents = 'none');
-                    if(o === ans) {
-                        btn.classList.add('correct');
-                        addScore(10);
-                    } else {
-                        btn.classList.add('wrong');
-                    }
-                    activeTimers.push(setTimeout(nextMathQuestion, 800));
-                };
-                optContainer.appendChild(btn);
-            });
-        }
-
-        // ========================================================
-        // OYUN 4: Gelişmiş Renk Dedektifi (Stroop Etkisi)
-        // ========================================================
-        const colorMap = { 'KIRMIZI': '#d63031', 'MAVİ': '#0984e3', 'YEŞİL': '#00b894', 'SARI': '#f1c40f', 'TURUNCU': '#e67e22', 'MOR': '#6c5ce7' };
-        function startColorCatch() {
-            showScreen('game-colors');
-            nextColorRound();
-        }
-
-        function nextColorRound() {
-            let keys = Object.keys(colorMap);
-            let targetText = keys[Math.floor(Math.random() * keys.length)];
-            // Metin rengini yanıltıcı olması için kasıtlı olarak farklı seçiyoruz
-            let misleadingColor = colorMap[keys[Math.floor(Math.random() * keys.length)]];
-            
-            let targetEl = document.getElementById('color-target');
-            targetEl.innerText = targetText;
-            targetEl.style.color = misleadingColor;
-
-            const grid = document.getElementById('color-box-grid');
-            grid.innerHTML = '';
-            
-            keys.sort(() => Math.random() - 0.5).forEach(k => {
-                let block = document.createElement('div');
-                block.className = 'color-block';
-                block.style.backgroundColor = colorMap[k];
-                block.onclick = () => {
-                    if(k === targetText) { addScore(10); }
-                    nextColorRound();
-                };
-                grid.appendChild(block);
-            });
-        }
-
-        // ========================================================
-        // OYUN 5: HIZLI TIKLAMA (DİNAMİK BOYUT)
-        // ========================================================
-        function startFastClick() {
-            showScreen('game-click');
-            let timeLeft = 10;
-            document.getElementById('c-time').innerText = timeLeft;
-            moveClickBox();
-
-            gameInterval = setInterval(() => {
-                timeLeft--;
-                document.getElementById('c-time').innerText = timeLeft;
-                if(timeLeft <= 0) {
-                    clearInterval(gameInterval);
-                    document.getElementById('click-box').style.display = 'none';
-                    toMenu();
-                } else {
-                    moveClickBox();
-                }
-            }, 1000);
-        }
-
-        function moveClickBox() {
-            let box = document.getElementById('click-box');
-            let area = document.getElementById('click-area');
-            
-            // Rastgele boyut değişimi (Çocuklar için yakalaması eğlenceli dinamik yapı)
-            let randomSize = Math.floor(Math.random() * 40) + 40; // 40px - 80px arası
-            box.style.width = randomSize + 'px';
-            box.style.height = randomSize + 'px';
-
-            let maxW = area.clientWidth - randomSize;
-            let maxH = area.clientHeight - randomSize;
-            box.style.left = Math.random() * maxW + 'px';
-            box.style.top = Math.random() * maxH + 'px';
-            box.style.display = 'block';
-        }
-
-        function hitClickBox() {
-            addScore(10);
-            moveClickBox();
-        }
-
-        // ========================================================
-        // OYUN 6: EKSİK HARF SÜPER LİSTE
-        // ========================================================
-        const words = [
-            { img: '🚀', clue: 'R _ K E T', missing: 'O', opts: ['O', 'U', 'A', 'E'] },
-            { img: '🦁', clue: 'A S _ A N', missing: 'L', opts: ['L', 'R', 'M', 'N'] },
-            { img: '🍌', clue: 'M U _', missing: 'Z', opts: ['Z', 'S', 'B', 'N'] },
-            { img: '🚂', clue: 'T R E _', missing: 'N', opts: ['N', 'M', 'L', 'K'] },
-            { img: '🍦', clue: 'D O N D U R _ A', missing: 'M', opts: ['M', 'N', 'V', 'B'] }
-        ];
-        let wordIndex = 0;
-        function startWordGame() {
-            showScreen('game-word');
-            wordIndex = 0;
-            showWordRound();
-        }
-
-        function showWordRound() {
-            let q = words[wordIndex];
-            document.getElementById('word-img').innerText = q.img;
-            document.getElementById('word-clue').innerText = q.clue;
-            
-            const optContainer = document.getElementById('word-opts');
-            optContainer.innerHTML = '';
-            
-            q.opts.sort(() => Math.random() - 0.5).forEach(o => {
-                let btn = document.createElement('button');
-                btn.className = 'math-btn';
-                btn.innerText = o;
-                btn.onclick = () => {
-                    if(o === q.missing) { addScore(15); } 
-                    wordIndex = (wordIndex + 1) % words.length;
-                    showWordRound();
-                };
-                optContainer.appendChild(btn);
-            });
-        }
-
-        // ========================================================
-        // GELİŞMİŞ KONFETİ SİSTEMİ
+        // ÖDÜL KONFETİ EFEKTİ
         // ========================================================
         const canvas = document.getElementById("confetti-canvas");
         const ctx = canvas.getContext("2d");
@@ -573,50 +605,26 @@
 
         function celebrate() {
             canvas.style.display = 'block';
-            confettiPieces = [];
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-
-            for (let i = 0; i < 150; i++) {
+            confettiPieces = []; canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+            for (let i = 0; i < 100; i++) {
                 confettiPieces.push({
-                    x: Math.random() * canvas.width,
-                    y: Math.random() * canvas.height - canvas.height,
-                    r: Math.random() * 6 + 5,
-                    d: Math.random() * canvas.height,
-                    color: `hsl(${Math.random() * 360}, 100%, 60%)`,
-                    tilt: Math.random() * 10 - 5
+                    x: Math.random() * canvas.width, y: Math.random() * canvas.height - canvas.height,
+                    r: Math.random() * 5 + 4, d: Math.random() * canvas.height,
+                    color: `hsl(${Math.random() * 360}, 80%, 50%)`, tilt: Math.random() * 10 - 5
                 });
             }
             if(confettiAnimation) cancelAnimationFrame(confettiAnimation);
             updateConfetti();
-            activeTimers.push(setTimeout(() => {
-                cancelAnimationFrame(confettiAnimation);
-                canvas.style.display = 'none';
-            }, 4000));
+            setTimeout(() => { cancelAnimationFrame(confettiAnimation); canvas.style.display = 'none'; }, 3000);
         }
 
         function updateConfetti() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             confettiPieces.forEach((p, index) => {
-                p.y += Math.cos(p.d) + 3 + p.r / 2;
-                p.tilt += 0.1;
-                ctx.beginPath();
-                ctx.lineWidth = p.r;
-                ctx.strokeStyle = p.color;
-                ctx.moveTo(p.x + p.tilt + p.r / 2, p.y);
-                ctx.lineTo(p.x + p.tilt, p.y + p.tilt + p.r / 2);
-                ctx.stroke();
-
-                if (p.y > canvas.height) {
-                    confettiPieces[index] = {
-                        x: Math.random() * canvas.width,
-                        y: -20,
-                        r: p.r,
-                        d: p.d,
-                        color: p.color,
-                        tilt: p.tilt
-                    };
-                }
+                p.y += Math.cos(p.d) + 4; p.tilt += 0.1;
+                ctx.beginPath(); ctx.lineWidth = p.r; ctx.strokeStyle = p.color;
+                ctx.moveTo(p.x + p.tilt + p.r / 2, p.y); ctx.lineTo(p.x + p.tilt, p.y + p.tilt + p.r / 2); ctx.stroke();
+                if (p.y > canvas.height) { confettiPieces[index].y = -20; }
             });
             confettiAnimation = requestAnimationFrame(updateConfetti);
         }
