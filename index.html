@@ -28,33 +28,19 @@
         .screen {
             background: white;
             width: 100%;
-            max-width: 450px; /* Masaüstünde telefon gibi görünür */
+            max-width: 450px; 
             height: 100vh;
             display: none;
             flex-direction: column;
             box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-        }
-
-        /* Tablet ve Masaüstü için yükseklik sınırı */
-        @media (min-height: 700px) {
-            .screen { height: 90vh; border-radius: 20px; }
-        }
-
+       
         .active { display: flex; }
 
         .padding { padding: 20px; }
 
         h1, h2 { color: var(--primary-blue); text-align: center; margin-bottom: 20px; }
 
-        input, textarea, select {
-            width: 100%;
-            padding: 12px;
-            margin-bottom: 12px;
-            border: 1px solid #ddd;
-            border-radius: 10px;
-            font-size: 16px; /* Mobil odaklanmada zoom yapmaması için 16px */
         }
-
         button {
             width: 100%;
             padding: 14px;
@@ -122,8 +108,8 @@
     <div id="login-screen" class="screen active">
         <div class="padding">
             <h1>KKTC TELEKOM</h1>
-            <input type="text" id="login-user" placeholder="Kullanıcı Adı (ozgur)">
-            <input type="password" id="login-pw" placeholder="Şifre (1234)">
+            <input type="text" id="login-user" placeholder="Kullanıcı Adı">
+            <input type="password" id="login-pw" placeholder="Şifre">
             <button onclick="login()">GİRİŞ</button>
             <button class="ghost" onclick="showScreen('forgot-pw-screen')">Şifremi Unuttum</button>
         </div>
@@ -240,7 +226,7 @@
             const pw = document.getElementById('login-pw').value;
 
             // Örnek girişler
-            if ((user === "ozgur" || user === "admin") && pw === "1234") {
+            if ((user === "admin" || user === "admin") && pw === "1234") {
                 currentUser = { username: user, isAdmin: true };
                 localStorage.setItem('currentUser', JSON.stringify(currentUser));
                 document.getElementById('welcome-msg').innerText = "Hoşgeldin, " + user.toUpperCase();
