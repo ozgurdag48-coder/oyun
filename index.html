@@ -2,398 +2,176 @@
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>KKTC Telekom Teknisyen Uygulaması</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Emoji Hafıza Oyunu</title>
     <style>
         :root {
-            --primary-blue: #0066cc;
-            --bg-gray: #f2f2f7;
-            --text-dark: #333;
-            --success: #28a745;
-            --danger: #dc3545;
+            --primary: #6c5ce7;
+            --secondary: #a29bfe;
+            --bg: #f0f2f5;
         }
 
-        * { box-sizing: border-box; }
-
         body {
-            font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
-            background-color: var(--bg-gray);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
             margin: 0;
+            padding: 20px;
+        }
+
+        h1 { color: var(--primary); margin-bottom: 10px; }
+        
+        .stats {
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+
+        .game-container {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            max-width: 500px;
+            width: 100%;
+        }
+
+        .card {
+            aspect-ratio: 1;
+            background-color: var(--primary);
+            border-radius: 12px;
+            cursor: pointer;
             display: flex;
             justify-content: center;
             align-items: center;
-            min-height: 100vh;
+            font-size: 2.5rem;
+            color: transparent;
+            transition: transform 0.3s, background-color 0.3s;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            user-select: none;
         }
 
-        .screen {
-            background: white;
-            width: 100%;
-            max-width: 450px; 
-            height: 100vh;
-            display: none;
-            flex-direction: column;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-       
-        .active { display: flex; }
-
-        .padding { padding: 20px; }
-
-        h1, h2 { color: var(--primary-blue); text-align: center; margin-bottom: 20px; }
-
+        .card.flipped {
+            background-color: white;
+            color: initial;
+            transform: rotateY(180deg);
         }
+
+        .card.matched {
+            background-color: #55efc4;
+            color: white;
+            cursor: default;
+        }
+
         button {
-            width: 100%;
-            padding: 14px;
-            background-color: var(--primary-blue);
+            margin-top: 30px;
+            padding: 10px 25px;
+            font-size: 1rem;
+            background-color: var(--primary);
             color: white;
             border: none;
-            border-radius: 10px;
-            font-weight: bold;
-            font-size: 16px;
+            border-radius: 8px;
             cursor: pointer;
-            margin-bottom: 10px;
-            transition: opacity 0.2s;
         }
 
-        button:active { opacity: 0.7; }
-        button.secondary { background-color: var(--success); }
-        button.danger { background-color: var(--danger); }
-        button.ghost { background: none; color: #555; }
+        button:hover { background-color: var(--secondary); }
 
-        .list-container {
-            flex-grow: 1;
-            overflow-y: auto;
-            padding: 15px;
-            background: #fff;
-        }
-
-        .list-item {
-            padding: 15px;
-            border-bottom: 1px solid #eee;
-            font-size: 14px;
-            background: #f9f9f9;
-            margin-bottom: 8px;
-            border-radius: 8px;
-        }
-
-        .checkbox-group {
-            display: flex;
-            align-items: center;
-            padding: 10px;
-            background: #f8f9fa;
-            margin-bottom: 5px;
-            border-radius: 8px;
-        }
-
-        .checkbox-group input { width: auto; margin-right: 15px; margin-bottom: 0; }
-
-        .footer-text {
-            text-align: center;
-            font-size: 11px;
-            color: #aaa;
-            padding: 10px;
-        }
-
-        .header-nav {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid #eee;
+        @media (max-width: 400px) {
+            .game-container { gap: 10px; }
+            .card { font-size: 2rem; }
         }
     </style>
 </head>
 <body>
 
-    <!-- GİRİŞ EKRANI -->
-    <div id="login-screen" class="screen active">
-        <div class="padding">
-            <h1>KKTC TELEKOM</h1>
-            <input type="text" id="login-user" placeholder="Kullanıcı Adı">
-            <input type="password" id="login-pw" placeholder="Şifre">
-            <button onclick="login()">GİRİŞ</button>
-            <button class="ghost" onclick="showScreen('forgot-pw-screen')">Şifremi Unuttum</button>
-        </div>
-        <div class="footer-text">Powered by ÖZGÜR DAĞ</div>
+    <h1>Hafıza Oyunu</h1>
+    
+    <div class="stats">
+        Hamle Sayısı: <span id="moves">0</span>
     </div>
 
-    <!-- ŞİFRE SIFIRLAMA -->
-    <div id="forgot-pw-screen" class="screen">
-        <div class="padding">
-            <h1>ŞİFRE SIFIRLAMA</h1>
-            <p style="font-size: 14px; color: #666; text-align: center;">Kayıtlı e-posta adresinize yeni bir şifre gönderilecektir.</p>
-            <input type="email" id="reset-mail" placeholder="E-posta Adresiniz">
-            <div id="reset-msg" style="text-align: center; margin-bottom: 15px;"></div>
-            <button class="secondary" onclick="resetPassword()">ŞİFRE ÜRET</button>
-            <button class="ghost" onclick="showScreen('login-screen')">GERİ DÖN</button>
-        </div>
+    <div class="game-container" id="gameBoard">
+        <!-- Kartlar JavaScript ile buraya gelecek -->
     </div>
 
-    <!-- ANA MENÜ -->
-    <div id="menu-screen" class="screen">
-        <div class="padding">
-            <h2 id="welcome-msg">Hoşgeldin</h2>
-            <button onclick="showScreen('kayit-screen')">➕ YENİ GÜNLÜK KAYDI</button>
-            <button onclick="loadReports()">📊 RAPORLAR</button>
-            <button onclick="openProfile()">👤 PROFİL / ŞİFRE</button>
-            <div id="admin-area" style="display:none;">
-                <button class="secondary" onclick="showScreen('admin-screen')">⚙️ KULLANICI YÖNETİMİ</button>
-            </div>
-            <button class="danger" style="margin-top: 20px;" onclick="logout()">ÇIKIŞ YAP</button>
-        </div>
-        <div class="footer-text">KKTC Telekom Teknik Birim v2.0</div>
-    </div>
-
-    <!-- KAYIT EKRANI -->
-    <div id="kayit-screen" class="screen">
-        <div class="padding header-nav">
-            <button style="width:70px; margin:0;" class="danger" onclick="showScreen('menu-screen')">İptal</button>
-            <h3 style="margin:0;">Yeni Kayıt</h3>
-            <button style="width:70px; margin:0;" class="secondary" onclick="saveRecord()">Kaydet</button>
-        </div>
-        <div class="list-container">
-            <textarea id="task-desc" placeholder="Yapılan İşin Detayı..." rows="4"></textarea>
-            <h4>Ekip Üyeleri:</h4>
-            <div id="personel-list"></div>
-            <hr>
-            <div class="checkbox-group">
-                <input type="checkbox" id="mesai-check"> <label for="mesai-check">EK MESAİ YAPILDI</label>
-            </div>
-        </div>
-    </div>
-
-    <!-- RAPOR EKRANI -->
-    <div id="rapor-screen" class="screen">
-        <div class="padding">
-            <input type="text" id="report-search" placeholder="İş detayı veya isim ile ara..." onkeyup="filterReports()">
-            <div style="display:flex; gap: 10px;">
-                <button class="secondary" onclick="exportCSV()">CSV AKTAR</button>
-                <button class="danger" onclick="clearAllData()">TÜMÜNÜ SİL</button>
-            </div>
-        </div>
-        <div id="report-list" class="list-container"></div>
-        <button class="ghost" onclick="showScreen('menu-screen')">ANA MENÜYE DÖN</button>
-    </div>
-
-    <!-- PROFİL / ŞİFRE EKRANI -->
-    <div id="profil-screen" class="screen">
-        <div class="padding">
-            <h2>PROFİL AYARLARI</h2>
-            <label>Kullanıcı Adı:</label>
-            <input type="text" id="prof-user" readonly>
-            <label>Yeni Şifre:</label>
-            <input type="password" id="prof-new-pw" placeholder="Yeni Şifre Belirleyin">
-            <button onclick="updateProfile()">GÜNCELLE</button>
-            <button class="ghost" onclick="showScreen('menu-screen')">GERİ</button>
-        </div>
-    </div>
-
-    <!-- ADMIN EKRANI -->
-    <div id="admin-screen" class="screen">
-        <div class="padding">
-            <h2>PERSONEL YÖNETİMİ</h2>
-            <input type="text" id="new-staff-name" placeholder="Yeni Personel Adı">
-            <button class="secondary" onclick="addStaff()">PERSONEL EKLE</button>
-            <div id="admin-staff-list" class="list-container" style="max-height: 250px; border: 1px solid #eee;"></div>
-            <button class="ghost" onclick="showScreen('menu-screen')">GERİ</button>
-        </div>
-    </div>
+    <button onclick="resetGame()">Yeniden Başlat</button>
 
     <script>
-        // --- DURUM YÖNETİMİ (Local Storage ile) ---
-        let currentUser = JSON.parse(localStorage.getItem('currentUser')) || null;
-        let personeller = JSON.parse(localStorage.getItem('personeller')) || ["MUSTAFA ADIŞANLI", "MEHMET KUZU", "KAYHAN SEZGİN", "ÖZGÜR TÜRKKAL", "ÖZGÜR DAĞ"];
-        let kayitlar = JSON.parse(localStorage.getItem('kayitlar')) || [];
+        const emojis = ['🐶', '🐱', '🐭', '🐹', '🐰', '🦊', '🐻', '🐼'];
+        let cards = [...emojis, ...emojis]; // Her emojiden ikişer tane
+        let flippedCards = [];
+        let matchedCount = 0;
+        let moves = 0;
+        let canFlip = true;
 
-        // Başlangıç kontrolü
-        window.onload = () => {
-            if(currentUser) {
-                document.getElementById('welcome-msg').innerText = "Hoşgeldin, " + currentUser.username.toUpperCase();
-                if(currentUser.isAdmin) document.getElementById('admin-area').style.display = "block";
-                showScreen('menu-screen');
-            }
-        };
-
-        function showScreen(id) {
-            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-            document.getElementById(id).classList.add('active');
-            if(id === 'kayit-screen') initKayitScreen();
-            if(id === 'admin-screen') loadAdminStaff();
+        function shuffle(array) {
+            return array.sort(() => Math.random() - 0.5);
         }
 
-        // --- GİRİŞ MANTIĞI ---
-        function login() {
-            const user = document.getElementById('login-user').value.trim().toLowerCase();
-            const pw = document.getElementById('login-pw').value;
+        function createBoard() {
+            const board = document.getElementById('gameBoard');
+            board.innerHTML = '';
+            shuffle(cards).forEach((emoji, index) => {
+                const cardElement = document.createElement('div');
+                cardElement.classList.add('card');
+                cardElement.dataset.emoji = emoji;
+                cardElement.dataset.index = index;
+                cardElement.onclick = () => flipCard(cardElement);
+                board.appendChild(cardElement);
+            });
+        }
 
-            // Örnek girişler
-            if ((user === "admin" || user === "admin") && pw === "1234") {
-                currentUser = { username: user, isAdmin: true };
-                localStorage.setItem('currentUser', JSON.stringify(currentUser));
-                document.getElementById('welcome-msg').innerText = "Hoşgeldin, " + user.toUpperCase();
-                document.getElementById('admin-area').style.display = "block";
-                showScreen('menu-screen');
-            } else if(user !== "" && pw !== "") {
-                currentUser = { username: user, isAdmin: false };
-                localStorage.setItem('currentUser', JSON.stringify(currentUser));
-                document.getElementById('welcome-msg').innerText = "Hoşgeldin, " + user.toUpperCase();
-                document.getElementById('admin-area').style.display = "none";
-                showScreen('menu-screen');
+        function flipCard(card) {
+            if (!canFlip || card.classList.contains('flipped') || card.classList.contains('matched')) return;
+
+            card.classList.add('flipped');
+            card.textContent = card.dataset.emoji;
+            flippedCards.push(card);
+
+            if (flippedCards.length === 2) {
+                moves++;
+                document.getElementById('moves').textContent = moves;
+                checkMatch();
+            }
+        }
+
+        function checkMatch() {
+            const [card1, card2] = flippedCards;
+            canFlip = false;
+
+            if (card1.dataset.emoji === card2.dataset.emoji) {
+                card1.classList.add('matched');
+                card2.classList.add('matched');
+                matchedCount += 2;
+                flippedCards = [];
+                canFlip = true;
+
+                if (matchedCount === cards.length) {
+                    setTimeout(() => alert(`Tebrikler! ${moves} hamlede bitirdin.`), 500);
+                }
             } else {
-                alert("Lütfen kullanıcı adı ve şifre giriniz!");
+                setTimeout(() => {
+                    card1.classList.remove('flipped');
+                    card2.classList.remove('flipped');
+                    card1.textContent = '';
+                    card2.textContent = '';
+                    flippedCards = [];
+                    canFlip = true;
+                }, 1000);
             }
         }
 
-        function logout() {
-            localStorage.removeItem('currentUser');
-            location.reload();
+        function resetGame() {
+            moves = 0;
+            matchedCount = 0;
+            flippedCards = [];
+            document.getElementById('moves').textContent = moves;
+            createBoard();
         }
 
-        // --- KAYIT İŞLEMLERİ ---
-        function initKayitScreen() {
-            const container = document.getElementById('personel-list');
-            container.innerHTML = "";
-            personeller.forEach(p => {
-                container.innerHTML += `
-                    <div class="checkbox-group">
-                        <input type="checkbox" class="p-check" value="${p}"> <label>${p}</label>
-                    </div>`;
-            });
-        }
-
-        function saveRecord() {
-            const desc = document.getElementById('task-desc').value;
-            const selected = Array.from(document.querySelectorAll('.p-check:checked')).map(cb => cb.value);
-            const mesai = document.getElementById('mesai-check').checked;
-
-            if(!desc || selected.length === 0) {
-                alert("Lütfen iş detayını ve en az bir personeli seçin!");
-                return;
-            }
-
-            const record = {
-                id: "ID-" + Date.now().toString().slice(-4),
-                user: currentUser.username,
-                desc: desc,
-                team: selected.join(", "),
-                mesai: mesai ? "Evet" : "Hayır",
-                date: new Date().toLocaleString('tr-TR')
-            };
-
-            kayitlar.unshift(record);
-            localStorage.setItem('kayitlar', JSON.stringify(kayitlar));
-            
-            alert("Kayıt başarıyla sisteme işlendi.");
-            document.getElementById('task-desc').value = "";
-            showScreen('menu-screen');
-        }
-
-        // --- RAPORLAMA ---
-        function loadReports() {
-            showScreen('rapor-screen');
-            filterReports();
-        }
-
-        function filterReports() {
-            const term = document.getElementById('report-search').value.toLowerCase();
-            const container = document.getElementById('report-list');
-            container.innerHTML = "";
-
-            const filtered = kayitlar.filter(r => 
-                r.desc.toLowerCase().includes(term) || 
-                r.team.toLowerCase().includes(term)
-            );
-
-            if(filtered.length === 0) {
-                container.innerHTML = "<p style='text-align:center; color:#888;'>Kayıt bulunamadı.</p>";
-                return;
-            }
-
-            filtered.forEach(r => {
-                container.innerHTML += `
-                    <div class="list-item">
-                        <strong>📅 ${r.date}</strong> <span style="float:right; color:var(--primary-blue)">#${r.id}</span><br>
-                        <p style="margin: 8px 0;">${r.desc}</p>
-                        <small>👥 Ekip: ${r.team}</small><br>
-                        <small>⏰ Mesai: ${r.mesai} | 👤 Kayıt: ${r.user}</small>
-                    </div>`;
-            });
-        }
-
-        function clearAllData() {
-            if(confirm("Tüm kayıtlar kalıcı olarak silinecek. Emin misiniz?")) {
-                kayitlar = [];
-                localStorage.setItem('kayitlar', JSON.stringify(kayitlar));
-                filterReports();
-            }
-        }
-
-        function exportCSV() {
-            if(kayitlar.length === 0) return alert("Dışa aktarılacak veri yok.");
-            let csv = "ID,Tarih,Is Detayi,Ekip,Mesai,Kayit Yapan\n";
-            kayitlar.forEach(r => {
-                csv += `${r.id},${r.date},"${r.desc}", "${r.team}",${r.mesai},${r.user}\n`;
-            });
-            
-            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-            const link = document.createElement("a");
-            link.href = URL.createObjectURL(blob);
-            link.download = "KKTC_Telekom_Rapor.csv";
-            link.click();
-        }
-
-        // --- PROFİL VE ADMIN ---
-        function openProfile() {
-            showScreen('profil-screen');
-            document.getElementById('prof-user').value = currentUser.username.toUpperCase();
-        }
-
-        function updateProfile() {
-            const newPw = document.getElementById('prof-new-pw').value;
-            if(newPw.length < 4) {
-                alert("Şifre en az 4 karakter olmalıdır!");
-                return;
-            }
-            alert("Şifreniz başarıyla güncellendi.");
-            showScreen('menu-screen');
-        }
-
-        function loadAdminStaff() {
-            const list = document.getElementById('admin-staff-list');
-            list.innerHTML = "";
-            personeller.forEach((p, index) => {
-                list.innerHTML += `
-                    <div style="display:flex; justify-content:space-between; padding:10px; border-bottom:1px solid #eee;">
-                        <span>${p}</span>
-                        <span onclick="deleteStaff(${index})" style="color:red; cursor:pointer;">❌ Sil</span>
-                    </div>`;
-            });
-        }
-
-        function addStaff() {
-            const name = document.getElementById('new-staff-name').value.trim().toUpperCase();
-            if(name) {
-                personeller.push(name);
-                localStorage.setItem('personeller', JSON.stringify(personeller));
-                document.getElementById('new-staff-name').value = "";
-                loadAdminStaff();
-            }
-        }
-
-        function deleteStaff(index) {
-            personeller.splice(index, 1);
-            localStorage.setItem('personeller', JSON.stringify(personeller));
-            loadAdminStaff();
-        }
-
-        function resetPassword() {
-            const mail = document.getElementById('reset-mail').value;
-            if(mail.includes("@")) {
-                document.getElementById('reset-msg').innerHTML = "BİLGİ: Yeni şifreniz <b>Telekom2024</b> olarak tanımlandı.";
-                document.getElementById('reset-msg').style.color = "green";
-            } else {
-                alert("Geçerli bir e-posta adresi girin.");
-            }
-        }
+        // Oyunu başlat
+        createBoard();
     </script>
 </body>
 </html>
