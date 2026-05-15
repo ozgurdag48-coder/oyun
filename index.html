@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KKTC Telekom Teknisyen Uygulaması</title>
+    <style>
+        :root {
+            --primary-blue: #0066cc;
+            --bg-gray: #f2f2f7;
+            --text-dark: #333;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+            background-color: var(--bg-gray);
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .screen {
+            background: white;
+            width: 100%;
+            max-width: 400px;
+            height: 90vh;
+            display: none;
+            flex-direction: column;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            border-radius: 15px;
+            overflow: hidden;
+        }
+
+        .active { display: flex; }
+
+        .padding { padding: 20px; }
+
+        h1 { color: var(--primary-blue); text-align: center; font-size: 24px; margin-bottom: 30px; }
+
+        input, textarea {
+            width: 100%;
+            padding: 15px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-sizing: border-box;
+            font-size: 16px;
+        }
+
+        button {
+            width: 100%;
+            padding: 15px;
+            background-color: var(--primary-blue);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 16px;
+            cursor: pointer;
+            margin-bottom: 10px;
+        }
+
+        button.secondary { background-color: #28a745; }
+        button.danger { background-color: #dc3545; }
+        button.ghost { background: none; color: #555; }
+
+        .list-container {
+            flex-grow: 1;
+            overflow-y: auto;
+            background: #fff;
+        }
+
+        .list-item {
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+            font-size: 14px;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .footer-text {
+            text-align: center;
+            font-size: 12px;
+            color: #888;
+            margin-top: auto;
+            padding: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- GİRİŞ EKRANI -->
+    <div id="login-screen" class="screen active">
+        <div class="padding">
+            <h1>KKTC TELEKOM</h1>
+            <input type="text" id="login-user" placeholder="Kullanıcı Adı">
+            <input type="password" id="login-pw" placeholder="Şifre">
+            <button onclick="login()">GİRİŞ</button>
+            <button class="ghost" onclick="showScreen('forgot-pw-screen')">Şifremi Unuttum</button>
+        </div>
+        <div class="footer-text">Powered by ÖZGÜR DAĞ</div>
+    </div>
+
+    <!-- ŞİFRE SIFIRLAMA -->
+    <div id="forgot-pw-screen" class="screen">
+        <div class="padding">
+            <h1>ŞİFRE SIFIRLAMA</h1>
+            <input type="email" id="reset-mail" placeholder="Kayıtlı Mailiniz">
+            <div id="reset-msg" style="text-align: center; margin-bottom: 10px;"></div>
+            <button class="secondary" onclick="resetPassword()">ŞİFRE ÜRET</button>
+            <button class="ghost" onclick="showScreen('login-screen')">GERİ</button>
+        </div>
+    </div>
+
+    <!-- ANA MENÜ -->
+    <div id="menu-screen" class="screen">
+        <div class="padding">
+            <h2 id="welcome-msg">Hoşgeldin</h2>
+            <button onclick="showScreen('kayit-screen')">YENİ GÜNLÜK KAYDI</button>
+            <button onclick="loadReports()">RAPORLAR</button>
+            <button onclick="showScreen('profil-screen')">PROFİL / ŞİFRE</button>
+            <div id="admin-area" style="display:none;">
+                <button class="secondary" onclick="showScreen('admin-screen')">KULLANICI YÖNETİMİ</button>
+            </div>
+            <button class="danger" onclick="showScreen('login-screen')">ÇIKIŞ</button>
+        </div>
+    </div>
+
+    <!-- KAYIT EKRANI -->
+    <div id="kayit-screen" class="screen">
+        <div class="padding" style="display:flex; justify-content: space-between; align-items:center;">
+            <button style="width:80px" class="danger" onclick="showScreen('menu-screen')">İPTAL</button>
+            <button style="width:80px" class="secondary" onclick="saveRecord()">KAYDET</button>
+        </div>
+        <div class="list-container padding">
+            <textarea id="task-desc" placeholder="Yapılan İşin Detayı" rows="5"></textarea>
+            <h4>Katılımcılar:</h4>
+            <div id="personel-list">
+                <!-- JS ile dolacak -->
+            </div>
+            <hr>
+            <div class="checkbox-group">
+                <input type="checkbox" id="mesai-check"> <label for="mesai-check">EK MESAİ VAR</label>
+            </div>
+        </div>
+    </div>
+
+    <!-- RAPOR EKRANI -->
+    <div id="rapor-screen" class="screen">
+        <div class="padding">
+            <input type="text" id="report-search" placeholder="Ara..." onkeyup="filterReports()">
+            <button class="secondary" onclick="exportCSV()">DIŞA AKTAR</button>
+        </div>
+        <div id="report-list" class="list-container">
+            <!-- Kayıtlar buraya gelecek -->
+        </div>
+        <button class="ghost" onclick="showScreen('menu-screen')">GERİ</button>
+    </div>
+
+    <script>
+        // --- DATA VE VERİTABANI SİMÜLASYONU ---
+        let currentUser = "";
+        const personeller = ["MUSTAFA ADIŞANLI", "MEHMET KUZU", "KAYHAN SEZGİN", "ÖZGÜR TÜRKKAL", "ÖZGÜR DAĞ"];
+        let kayitlar = [];
+
+        function showScreen(id) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+        }
+
+        // --- GİRİŞ MANTIĞI ---
+        function login() {
+            const user = document.getElementById('login-user').value.toLowerCase();
+            const pw = document.getElementById('login-pw').value;
+
+            if (user === "ozgur dag" && pw === "1234") {
+                currentUser = user;
+                document.getElementById('welcome-msg').innerText = "Hoşgeldin, " + user.toUpperCase();
+                document.getElementById('admin-area').style.display = "block";
+                initKayitScreen();
+                showScreen('menu-screen');
+            } else {
+                alert("Hatalı Giriş!");
+            }
+        }
+
+        // --- KAYIT İŞLEMLERİ ---
+        function initKayitScreen() {
+            const container = document.getElementById('personel-list');
+            container.innerHTML = "";
+            personeller.forEach(p => {
+                container.innerHTML += `
+                    <div class="checkbox-group">
+                        <input type="checkbox" class="p-check" value="${p}"> <label>${p}</label>
+                    </div>`;
+            });
+        }
+
+        function saveRecord() {
+            const desc = document.getElementById('task-desc').value;
+            const selected = Array.from(document.querySelectorAll('.p-check:checked')).map(cb => cb.value);
+            const mesai = document.getElementById('mesai-check').checked;
+            const date = new Date().toLocaleString('tr-TR');
+
+            const record = {
+                id: "ID-" + Math.floor(Math.random()*1000),
+                user: currentUser,
+                desc: desc,
+                team: selected.join(", "),
+                mesai: mesai ? "Evet" : "Hayır",
+                date: date
+            };
+
+            kayitlar.unshift(record);
+            alert("Kayıt Başarılı!");
+            showScreen('menu-screen');
+        }
+
+        // --- RAPORLAMA ---
+        function loadReports() {
+            showScreen('rapor-screen');
+            filterReports();
+        }
+
+        function filterReports() {
+            const term = document.getElementById('report-search').value.toLowerCase();
+            const container = document.getElementById('report-list');
+            container.innerHTML = "";
+
+            kayitlar.filter(r => r.desc.toLowerCase().includes(term) || r.team.toLowerCase().includes(term))
+            .forEach(r => {
+                container.innerHTML += `
+                    <div class="list-item">
+                        <strong>${r.date} - ${r.id}</strong><br>
+                        ${r.desc}<br>
+                        <small>Ekip: ${r.team} | Mesai: ${r.mesai}</small>
+                    </div>`;
+            });
+        }
+
+        function exportCSV() {
+            alert("CSV dosyası hazırlandı (Simülasyon)");
+        }
+
+        function resetPassword() {
+            const mail = document.getElementById('reset-mail').value;
+            if(mail) {
+                document.getElementById('reset-msg').innerHTML = "BAŞARILI! Yeni Şifre: 885522";
+                document.getElementById('reset-msg').style.color = "green";
+            }
+        }
+    </script>
+</body>
+</html>
+
