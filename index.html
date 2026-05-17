@@ -2,445 +2,115 @@
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Advanced Cognitive & Mathematical Reasoning Suite</title>
+    <title>Bilişsel Test Paneli</title>
     <style>
-        :root {
-            --bg-main: #0f172a;
-            --bg-surface: #1e293b;
-            --text-main: #f8fafc;
-            --text-muted: #94a3b8;
-            --color-primary: #6366f1;
-            --color-primary-hover: #4f46e5;
-            --color-success: #10b981;
-            --color-danger: #ef4444;
-            --color-border: #334155;
-            --font-family: 'Inter', system-ui, -apple-system, sans-serif;
-        }
-
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: var(--font-family); }
-
-        body {
-            background-color: var(--bg-main);
-            color: var(--text-main);
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 40px 20px;
-            overflow-x: hidden;
-        }
-
-        header {
-            text-align: center;
-            margin-bottom: 30px;
-            max-width: 800px;
-        }
-
-        header h1 { font-size: 2.2rem; font-weight: 800; tracking: -0.05em; margin-bottom: 8px; color: #fff; }
-        header p { color: var(--text-muted); font-size: 1rem; }
-
-        .dashboard-stats {
-            display: flex;
-            gap: 20px;
-            background: var(--bg-surface);
-            padding: 16px 32px;
-            border-radius: 16px;
-            border: 1px solid var(--color-border);
-            margin-bottom: 40px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
-        }
-
-        .stat-item { display: flex; flex-direction: column; align-items: center; min-width: 120px; }
-        .stat-label { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); margin-bottom: 4px; }
-        .stat-value { font-size: 1.4rem; font-weight: 700; color: var(--color-primary); }
-
-        /* MENU ARCHITECTURE */
-        .menu-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 24px;
-            max-width: 1000px;
-            width: 100%;
-        }
-
-        .app-card {
-            background: var(--bg-surface);
-            border: 1px solid var(--color-border);
-            border-radius: 20px;
-            padding: 30px;
-            cursor: pointer;
-            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .app-card:hover {
-            transform: translateY(-5px);
-            border-color: var(--color-primary);
-            box-shadow: 0 12px 30px rgba(99, 102, 241, 0.1);
-        }
-
-        .app-card .card-icon { font-size: 2.5rem; margin-bottom: 16px; display: block; }
-        .app-card h3 { font-size: 1.25rem; font-weight: 700; margin-bottom: 8px; color: #fff; }
-        .app-card p { font-size: 0.9rem; color: var(--text-muted); line-height: 1.5; }
-
-        /* SCREEN MANAGEMENT */
-        .game-wrapper {
-            display: none;
-            width: 100%;
-            max-width: 600px;
-            background: var(--bg-surface);
-            border: 1px solid var(--color-border);
-            border-radius: 24px;
-            padding: 35px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
-        }
-        .game-wrapper.active { display: flex; flex-direction: column; animation: viewFade 0.3s ease; }
-
-        @keyframes viewFade { from { opacity: 0; transform: scale(0.98); } to { opacity: 1; transform: scale(1); } }
-
-        .view-header { width: 100%; margin-bottom: 25px; text-align: left; }
-        .view-title { font-size: 1.5rem; font-weight: 700; color: #fff; }
-        .view-desc { font-size: 0.9rem; color: var(--text-muted); margin-top: 4px; }
-
-        /* COMPONENT CONTROLS */
-        .workspace {
-            width: 100%;
-            min-height: 220px;
-            background: rgba(15, 23, 42, 0.6);
-            border: 1px solid var(--color-border);
-            border-radius: 16px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin-bottom: 25px;
-            padding: 20px;
-            position: relative;
-        }
-
-        .btn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; width: 100%; }
-        .core-btn {
-            background: #273549;
-            color: var(--text-main);
-            border: 1px solid var(--color-border);
-            padding: 16px;
-            font-size: 1.1rem;
-            font-weight: 600;
-            border-radius: 12px;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        .core-btn:hover { background: #33445c; border-color: var(--text-muted); }
-        .core-btn.correct { background: var(--color-success) !important; border-color: var(--color-success); color: #fff; }
-        .core-btn.wrong { background: var(--color-danger) !important; border-color: var(--color-danger); color: #fff; }
-
-        .action-btn {
-            background: #ef4444;
-            color: #ffffff;
-            border: none;
-            padding: 14px;
-            border-radius: 12px;
-            cursor: pointer;
-            font-weight: 700;
-            width: 100%;
-            margin-top: 20px;
-            transition: background 0.2s;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-        .action-btn:hover { background: #dc2626; }
-
-        /* SPECIFIC DESIGN MODULES */
-        .sequence-box { font-size: 2.2rem; font-weight: 800; letter-spacing: 2px; color: var(--color-primary); }
-        .matrix-layout { display: grid; grid-template-columns: repeat(2, 90px); gap: 12px; }
-        .matrix-node { width: 90px; height: 90px; background: var(--bg-main); border: 2px solid var(--color-border); border-radius: 8px; display: flex; justify-content: center; align-items: center; font-size: 2.2rem; }
-        
-        .target-node-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; width: 100%; }
-        .target-chip { background: #273549; padding: 20px; font-size: 1.5rem; font-weight: 700; border: 1px solid var(--color-border); border-radius: 12px; cursor: pointer; color: #fff; transition: all 0.2s; }
-        .target-chip:hover { border-color: var(--color-primary); }
-        .target-chip.active { background: var(--color-primary); border-color: var(--color-primary); }
-
-        canvas { max-width: 100%; display: block; }
+        body { background: #0f172a; color: #fff; font-family: sans-serif; padding: 20px; text-align: center; }
+        .menu-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; max-width: 800px; margin: 0 auto; }
+        .card { background: #1e293b; padding: 20px; border-radius: 10px; cursor: pointer; border: 1px solid #334155; }
+        .card:hover { border-color: #6366f1; }
+        .game-wrapper { display: none; background: #1e293b; padding: 30px; border-radius: 15px; max-width: 500px; margin: 20px auto; }
+        .btn { background: #273549; color: #fff; padding: 15px; margin: 10px; border: none; border-radius: 5px; cursor: pointer; font-size: 18px; width: 80%; }
+        .btn:hover { background: #33445c; }
+        .back-btn { background: #ef4444; margin-top: 30px; font-weight: bold; }
+        .back-btn:hover { background: #dc2626; }
+        #pattern-display { font-size: 32px; font-weight: bold; margin: 20px; color: #6366f1; }
     </style>
 </head>
 <body>
 
-    <header>
-        <h1>Cognitive Reasoning Analytics Suite</h1>
-        <p>Matematiksel Mantık, Mekansal İlişkiler ve İleri Düzey Görsel Muhakeme Modülleri</p>
-    </header>
+    <h1>Bilişsel Test Merkezi</h1>
+    <p style="color: #94a3b8; margin-bottom: 30px;">Lütfen oynamak istediğiniz modülü seçin.</p>
 
-    <div class="dashboard-stats">
-        <div class="stat-item">
-            <span class="stat-label">Bilişsel Skor</span>
-            <span class="stat-value" id="global-score">0</span>
+    <!-- ANA MENÜ -->
+    <div id="menu-view" class="menu-grid">
+        <div class="card" onclick="startPatternGame()">
+            <h2>🔢 Sayısal Örüntü</h2>
+            <p>Sayı dizisindeki kuralı bulun.</p>
         </div>
-        <div class="stat-item">
-            <span class="stat-label">Global Seviye</span>
-            <span class="stat-value" id="global-rank">Tier-1</span>
+        <div class="card" onclick="startMatrixGame()">
+            <h2>🧩 Matris Testi</h2>
+            <p>Mantıksal sembolü tamamlayın.</p>
         </div>
     </div>
 
-    <!-- MAIN DASHBOARD MENU -->
-    <div id="dashboard-view" class="menu-grid">
-        <div class="app-card" onclick="Engine.loadController('Patterns')">
-            <span class="card-icon">🔢</span>
-            <h3>Sayısal Örüntü Analizi</h3>
-            <p>Değişken diziler arasındaki cebirsel ve ardışık mantık kurallarını matematiksel olarak modelleyin.</p>
-        </div>
-        <div class="app-card" onclick="Engine.loadController('Matrix')">
-            <span class="card-icon">🧩</span>
-            <h3>Matris Matürasyon Testi</h3>
-            <p>Raven standartlarına uygun soyut görsel sembol dönüşümlerini geometrik olarak muhakeme edin.</p>
-        </div>
-        <div class="app-card" onclick="Engine.loadController('Scales')">
-            <span class="card-icon">⚖️</span>
-            <h3>Cebirsel Kütle Dengesi</h3>
-            <p>Terazi sistemleri üzerindeki simgesel değişkenleri doğrusal denklemler kurarak dengeleyin.</p>
-        </div>
-        <div class="app-card" onclick="Engine.loadController('Cubes')">
-            <span class="card-icon">📦</span>
-            <h3>Uzamsal Küp Projeksiyonu</h3>
-            <p>3 boyutlu matris uzayında gizli derinlik vektörlerine sahip izometrik blok hacimlerini hesaplayın.</p>
-        </div>
-        <div class="app-card" onclick="Engine.loadController('Symmetry')">
-            <span class="card-icon">🪞</span>
-            <h3>Vektörel Yansıma Matrisi</h3>
-            <p>Rastgele üretilen poligonların kartezyen eksen yansımalarını uzamsal simetride tespit edin.</p>
-        </div>
-        <div class="app-card" onclick="Engine.loadController('TargetSum')">
-            <span class="card-icon">🎯</span>
-            <h3>Kombinasyonel Optimizasyon</h3>
-            <p>Dağınık veri havuzunda aranan hedef toplam değerini veren sayı kümelerini eşleyin.</p>
-        </div>
+    <!-- OYUN 1: ÖRÜNTÜ -->
+    <div id="game-patterns" class="game-wrapper">
+        <h2>Sayısal Örüntü Analizi</h2>
+        <div id="pattern-display"></div>
+        <div id="pattern-options"></div>
+        <button class="btn back-btn" onclick="backToMenu()">◀ Menüye Geri Dön</button>
     </div>
 
-    <!-- GAME CONTAINERS -->
-    <div id="view-patterns" class="game-wrapper">
-        <div class="view-header">
-            <div class="view-title">Sayısal Örüntü Analizi</div>
-            <div class="view-desc">Dizideki matematiksel fonksiyon kuralını analiz edip bilinmeyeni bulun.</div>
-        </div>
-        <div class="workspace">
-            <div class="sequence-box" id="node-pattern-render"></div>
-        </div>
-        <div class="btn-grid" id="node-pattern-opts"></div>
-        <button class="action-btn" onclick="Engine.exitToDashboard()">◀ Menüye Geri Dön</button>
-    </div>
-
-    <div id="view-matrix" class="game-wrapper">
-        <div class="view-header">
-            <div class="view-title">Matris Matürasyon Testi</div>
-            <div class="view-desc">Boş bırakılan 4. hücreye gelecek doğru geometrik yönelimi saptayın.</div>
-        </div>
-        <div class="workspace">
-            <div class="matrix-layout" id="node-matrix-render"></div>
-        </div>
-        <div class="btn-grid" id="node-matrix-opts"></div>
-        <button class="action-btn" onclick="Engine.exitToDashboard()">◀ Menüye Geri Dön</button>
-    </div>
-
-    <div id="view-scales" class="game-wrapper">
-        <div class="view-header">
-            <div class="view-title">Cebirsel Kütle Dengesi</div>
-            <div class="view-desc">Sol kefedeki kütle ilişkisine göre sağ kefedeki soru işaretini çözümleyin.</div>
-        </div>
-        <div class="workspace">
-            <canvas id="canvas-scales" width="450" height="180"></canvas>
-        </div>
-        <div class="btn-grid" id="node-scales-opts"></div>
-        <button class="action-btn" onclick="Engine.exitToDashboard()">◀ Menüye Geri Dön</button>
-    </div>
-
-    <div id="view-cubes" class="game-wrapper">
-        <div class="view-header">
-            <div class="view-title">Uzamsal Küp Projeksiyonu</div>
-            <div class="view-desc">Gizli bölmeler dahil izometrik izdüşümü verilen toplam birim küp sayısını bulun.</div>
-        </div>
-        <div class="workspace">
-            <canvas id="canvas-cubes" width="300" height="220"></canvas>
-        </div>
-        <div class="btn-grid" id="node-cubes-opts"></div>
-        <button class="action-btn" onclick="Engine.exitToDashboard()">◀ Menüye Geri Dön</button>
-    </div>
-
-    <div id="view-symmetry" class="game-wrapper">
-        <div class="view-header">
-            <div class="view-title">Vektörel Yansıma Matrisi</div>
-            <div class="view-desc">Orijinal yapının dikey kesit eksenindeki kusursuz ayna simetrisini bulun.</div>
-        </div>
-        <div class="workspace">
-            <canvas id="canvas-symmetry" width="360" height="160"></canvas>
-        </div>
-        <div class="btn-grid" id="node-symmetry-opts"></div>
-        <button class="action-btn" onclick="Engine.exitToDashboard()">◀ Menüye Geri Dön</button>
-    </div>
-
-    <div id="view-target" class="game-wrapper">
-        <div class="view-header">
-            <div class="view-title">Kombinasyonel Optimizasyon</div>
-            <div class="view-desc">Toplamları tam olarak şu değeri veren çifti seçin: <span id="node-target-val" style="color:var(--color-primary); font-weight:700;">0</span></div>
-        </div>
-        <div class="workspace">
-            <div class="target-node-grid" id="node-target-grid"></div>
-        </div>
-        <button class="action-btn" onclick="Engine.exitToDashboard()">◀ Menüye Geri Dön</button>
+    <!-- OYUN 2: MATRİS -->
+    <div id="game-matrix" class="game-wrapper">
+        <h2>Matris Matürasyon Testi</h2>
+        <div id="matrix-display" style="font-size: 40px; margin: 20px;"></div>
+        <div id="matrix-options"></div>
+        <button class="btn back-btn" onclick="backToMenu()">◀ Menüye Geri Dön</button>
     </div>
 
     <script>
-        /**
-         * COGNITIVE REASONING SUITE - FIXED PRODUCTION ARCHITECTURE
-         */
-        const Engine = {
-            score: 0,
-            activeLoop: null,
+        // Sayfa geçişleri için temel fonksiyonlar
+        function backToMenu() {
+            document.getElementById('game-patterns').style.display = 'none';
+            document.getElementById('game-matrix').style.display = 'none';
+            document.getElementById('menu-view').style.display = 'grid';
+        }
 
-            init() {
-                this.updateScoreUI();
-            },
+        function startPatternGame() {
+            document.getElementById('menu-view').style.display = 'none';
+            document.getElementById('game-patterns').style.display = 'block';
+            
+            // Soru üretimi
+            let artis = Math.floor(Math.random() * 5) + 3;
+            let start = Math.floor(Math.random() * 10) + 1;
+            let soru = `${start} - ${start+artis} - ${start+2*artis} - ?`;
+            let cevap = start + 3*artis;
 
-            loadController(moduleName) {
-                this.exitActiveLoops();
-                document.getElementById('dashboard-view').style.display = 'none';
-                
-                const views = ['Patterns', 'Matrix', 'Scales', 'Cubes', 'Symmetry', 'TargetSum'];
-                views.forEach(v => {
-                    const el = document.getElementById(`view-${v.toLowerCase()}`);
-                    if(el) el.classList.remove('active');
-                });
+            document.getElementById('pattern-display').innerText = soru;
 
-                setTimeout(() => {
-                    switch(moduleName) {
-                        case 'Patterns': Modules.Patterns.init(); break;
-                        case 'Matrix': Modules.Matrix.init(); break;
-                        case 'Scales': Modules.Scales.init(); break;
-                        case 'Cubes': Modules.Cubes.init(); break;
-                        case 'Symmetry': Modules.Symmetry.init(); break;
-                        case 'TargetSum': Modules.TargetSum.init(); break;
-                    }
-                }, 50);
-            },
+            // Seçenekler
+            let optsDiv = document.getElementById('pattern-options');
+            optsDiv.innerHTML = '';
+            let seçenekler = [cevap, cevap+2, cevap-3, cevap+5].sort(() => Math.random() - 0.5);
 
-            exitToDashboard() {
-                this.exitActiveLoops();
-                const wrappers = document.querySelectorAll('.game-wrapper');
-                wrappers.forEach(w => w.classList.remove('active'));
-                document.getElementById('dashboard-view').style.display = 'grid';
-            },
+            seçenekler.forEach(s => {
+                let btn = document.createElement('button');
+                btn.className = 'btn';
+                btn.innerText = s;
+                btn.onclick = function() {
+                    if(s === cevap) { alert('Doğru Tebrikler!'); startPatternGame(); }
+                    else { alert('Yanlış, tekrar deneyin.'); }
+                };
+                optsDiv.appendChild(btn);
+            });
+        }
 
-            exitActiveLoops() {
-                if (this.activeLoop) {
-                    clearTimeout(this.activeLoop);
-                    this.activeLoop = null;
-                }
-            },
+        function startMatrixGame() {
+            document.getElementById('menu-view').style.display = 'none';
+            document.getElementById('game-matrix').style.display = 'block';
 
-            addMetrics(pts) {
-                this.score += pts;
-                this.updateScoreUI();
-            },
+            let sorular = [
+                { q: '⬆️ ➡️ ⬇️ ?', a: '⬅️', o: ['⬅️', '↗️', '⬇️', '↖️'] },
+                { q: '🟢 🟩 🔵 ?', a: '🟦', o: ['🟦', '🔺', '🟡', '⚫'] }
+            ];
+            let secilen = sorular[Math.floor(Math.random() * sorular.length)];
 
-            updateScoreUI() {
-                document.getElementById('global-score').innerText = this.score;
-                let tier = "Tier-1 (Analist)";
-                if(this.score >= 150) tier = "Tier-4 (Dahi Seviye)";
-                else if(this.score >= 100) tier = "Tier-3 (Stratejist)";
-                else if(this.score >= 50) tier = "Tier-2 (Uzman)";
-                document.getElementById('global-rank').innerText = tier;
-            },
+            document.getElementById('matrix-display').innerText = secilen.q;
 
-            freezeOptions(selector) {
-                document.querySelectorAll(selector).forEach(el => el.style.pointerEvents = 'none');
-            }
-        };
-
-        const Modules = {
-            Patterns: {
-                generators: [
-                    () => { let r = Math.floor(Math.random()*3)+2; return { s: `2 - ${2*r} - ${2*r*r} - ${2*r*r*r} - ?`, a: 2*Math.pow(r,4) }; },
-                    () => { let s = Math.floor(Math.random()*10)+5; let d = Math.floor(Math.random()*4)+3; return { s: `${s} - ${s+d} - ${s+2*d} - ${s+3*d} - ?`, a: s+4*d }; },
-                    () => { let s = Math.floor(Math.random()*5)+2; return { s: `${s} - ${s*2+1} - ${(s*2+1)*2+1} - ?`, a: ((s*2+1)*2+1)*2+1 }; }
-                ],
-                init() {
-                    document.getElementById('view-patterns').classList.add('active');
-                    let data = this.generators[Math.floor(Math.random() * this.generators.length)]();
-                    document.getElementById('node-pattern-render').innerText = data.s;
-
-                    let pool = new Set([data.a]);
-                    while(pool.size < 4) pool.add(data.a + Math.floor(Math.random()*20) - 10);
-                    let arr = Array.from(pool).sort(() => Math.random() - 0.5);
-
-                    const opts = document.getElementById('node-pattern-opts');
-                    opts.innerHTML = '';
-                    arr.forEach(val => {
-                        let btn = document.createElement('button');
-                        btn.className = 'core-btn p-opt-node';
-                        btn.innerText = val;
-                        btn.onclick = () => {
-                            Engine.freezeOptions('.p-opt-node');
-                            if(val === data.a) { btn.classList.add('correct'); Engine.addMetrics(10); }
-                            else { btn.classList.add('wrong'); }
-                            Engine.activeLoop = setTimeout(() => this.init(), 1000);
-                        };
-                        opts.appendChild(btn);
-                    });
-                }
-            },
-
-            Matrix: {
-                dataset: [
-                    { nodes: ['⚛️', '☸️', '♊', '?'], ans: '♋', opts: ['♋', '♌', '⚛️', '⚙️'] },
-                    { nodes: ['⬆️', '➡️', '⬇️', '?'], ans: '⬅️', opts: ['⬅️', '↗️', '↖️', '⬇️'] },
-                    { nodes: ['🟢', '🟩', '🔵', '?'], ans: '🟦', opts: ['🟦', '🔺', '🟡', '⚫'] },
-                    { nodes: ['◼️', '◻️', '🔷', '?'], ans: '🔶', opts: ['🔶', '🔷', '🔴', '⚫'] }
-                ],
-                init() {
-                    document.getElementById('view-matrix').classList.add('active');
-                    let q = this.dataset[Math.floor(Math.random() * this.dataset.length)];
-                    const container = document.getElementById('node-matrix-render');
-                    container.innerHTML = '';
-                    q.nodes.forEach(n => {
-                        let d = document.createElement('div');
-                        d.className = 'matrix-node';
-                        d.innerText = n;
-                        container.appendChild(d);
-                    });
-
-                    const opts = document.getElementById('node-matrix-opts');
-                    opts.innerHTML = '';
-                    q.opts.sort(() => Math.random() - 0.5).forEach(o => {
-                        let btn = document.createElement('button');
-                        btn.className = 'core-btn m-opt-node';
-                        btn.innerText = o;
-                        btn.onclick = () => {
-                            Engine.freezeOptions('.m-opt-node');
-                            if(o === q.ans) { btn.classList.add('correct'); Engine.addMetrics(15); }
-                            else { btn.classList.add('wrong'); }
-                            Engine.activeLoop = setTimeout(() => this.init(), 1000);
-                        };
-                        opts.appendChild(btn);
-                    });
-                }
-            },
-
-            Scales: {
-                init() {
-                    document.getElementById('view-scales').classList.add('active');
-                    const canvas = document.getElementById('canvas-scales');
-                    if(!canvas) return;
-                    const ctx = canvas.getContext('2d');
-                    ctx.clearRect(0,0,canvas.width,canvas.height);
-
-                    let leftWeight = Math.floor(Math.random()*3)+2;
-                    
-                    ctx.strokeStyle = "#475569"; ctx.lineWidth = 4;
-                    ctx.beginPath(); ctx.moveTo(225, 150); ctx.lineTo(225, 60); ctx.stroke(); 
-                    ctx.beginPath(); ctx.moveTo(75, 60); ctx.lineTo(375, 60); ctx.stroke(); 
-                    ctx.beginPath(); ctx.moveTo(200, 150); ctx.lineTo(250, 150); ctx.stroke(); 
-
-                    ctx.strokeStyle = "#6366f1";
-                    ctx.beginPath(); ctx.moveTo(75,60); ctx.lineTo(45,110); ctx.lineTo(105,110); ctx.closePath(); ctx.stroke();
-                    ctx.beginPath(); ctx.moveTo(375,60); ctx.lineTo(345,110); ctx.lineTo(405,110); ctx.closePath(); ctx.stroke();
-
-                    ctx.fillStyle = "#fff"; ctx.font = "
+            let optsDiv = document.getElementById('matrix-options');
+            optsDiv.innerHTML = '';
+            secilen.o.forEach(s => {
+                let btn = document.createElement('button');
+                btn.className = 'btn';
+                btn.innerText = s;
+                btn.onclick = function() {
+                    if(s === secilen.a) { alert('Harika, Doğru!'); startMatrixGame(); }
+                    else { alert('Hatalı seçim.'); }
+                };
+                optsDiv.appendChild(btn);
+            });
+        }
+    </script>
+</body>
+</html>
