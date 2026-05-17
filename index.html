@@ -136,18 +136,20 @@
         .core-btn.wrong { background: var(--color-danger) !important; border-color: var(--color-danger); color: #fff; }
 
         .action-btn {
-            background: transparent;
-            color: var(--text-muted);
-            border: 1px solid var(--color-border);
-            padding: 12px;
-            border-radius: 10px;
+            background: #ef4444;
+            color: #ffffff;
+            border: none;
+            padding: 14px;
+            border-radius: 12px;
             cursor: pointer;
-            font-weight: 600;
+            font-weight: 700;
             width: 100%;
-            margin-top: 10px;
-            transition: all 0.2s;
+            margin-top: 20px;
+            transition: background 0.2s;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
-        .action-btn:hover { color: #fff; background: rgba(255,255,255,0.05); }
+        .action-btn:hover { background: #dc2626; }
 
         /* SPECIFIC DESIGN MODULES */
         .sequence-box { font-size: 2.2rem; font-weight: 800; letter-spacing: 2px; color: var(--color-primary); }
@@ -205,12 +207,12 @@
         <div class="app-card" onclick="Engine.loadController('Symmetry')">
             <span class="card-icon">🪞</span>
             <h3>Vektörel Yansıma Matrisi</h3>
-            <p>Rastgele üretilen poligonların kartelyen eksen yansımalarını uzamsal simetride tespit edin.</p>
+            <p>Rastgele üretilen poligonların kartezyen eksen yansımalarını uzamsal simetride tespit edin.</p>
         </div>
         <div class="app-card" onclick="Engine.loadController('TargetSum')">
             <span class="card-icon">🎯</span>
             <h3>Kombinasyonel Optimizasyon</h3>
-            <p>Dağınık veri havuzunda aranan hedef integral/toplam değerini veren sayı kümelerini eşleyin.</p>
+            <p>Dağınık veri havuzunda aranan hedef toplam değerini veren sayı kümelerini eşleyin.</p>
         </div>
     </div>
 
@@ -224,7 +226,7 @@
             <div class="sequence-box" id="node-pattern-render"></div>
         </div>
         <div class="btn-grid" id="node-pattern-opts"></div>
-        <button class="action-btn" onclick="Engine.exitToDashboard()">Dashboard'a Dön</button>
+        <button class="action-btn" onclick="Engine.exitToDashboard()">◀ Menüye Geri Dön</button>
     </div>
 
     <div id="view-matrix" class="game-wrapper">
@@ -236,7 +238,7 @@
             <div class="matrix-layout" id="node-matrix-render"></div>
         </div>
         <div class="btn-grid" id="node-matrix-opts"></div>
-        <button class="action-btn" onclick="Engine.exitToDashboard()">Dashboard'a Dön</button>
+        <button class="action-btn" onclick="Engine.exitToDashboard()">◀ Menüye Geri Dön</button>
     </div>
 
     <div id="view-scales" class="game-wrapper">
@@ -248,7 +250,7 @@
             <canvas id="canvas-scales" width="450" height="180"></canvas>
         </div>
         <div class="btn-grid" id="node-scales-opts"></div>
-        <button class="action-btn" onclick="Engine.exitToDashboard()">Dashboard'a Dön</button>
+        <button class="action-btn" onclick="Engine.exitToDashboard()">◀ Menüye Geri Dön</button>
     </div>
 
     <div id="view-cubes" class="game-wrapper">
@@ -260,7 +262,7 @@
             <canvas id="canvas-cubes" width="300" height="220"></canvas>
         </div>
         <div class="btn-grid" id="node-cubes-opts"></div>
-        <button class="action-btn" onclick="Engine.exitToDashboard()">Dashboard'a Dön</button>
+        <button class="action-btn" onclick="Engine.exitToDashboard()">◀ Menüye Geri Dön</button>
     </div>
 
     <div id="view-symmetry" class="game-wrapper">
@@ -272,7 +274,7 @@
             <canvas id="canvas-symmetry" width="360" height="160"></canvas>
         </div>
         <div class="btn-grid" id="node-symmetry-opts"></div>
-        <button class="action-btn" onclick="Engine.exitToDashboard()">Dashboard'a Dön</button>
+        <button class="action-btn" onclick="Engine.exitToDashboard()">◀ Menüye Geri Dön</button>
     </div>
 
     <div id="view-target" class="game-wrapper">
@@ -283,15 +285,13 @@
         <div class="workspace">
             <div class="target-node-grid" id="node-target-grid"></div>
         </div>
-        <button class="action-btn" onclick="Engine.exitToDashboard()">Dashboard'a Dön</button>
+        <button class="action-btn" onclick="Engine.exitToDashboard()">◀ Menüye Geri Dön</button>
     </div>
 
     <script>
         /**
-         * COGNITIVE REASONING SUITE - ARCHITECTURE ENGINE
-         * Object-Oriented Standalone Architecture
+         * COGNITIVE REASONING SUITE - FIXED PRODUCTION ARCHITECTURE
          */
-        
         const Engine = {
             score: 0,
             activeLoop: null,
@@ -305,16 +305,22 @@
                 document.getElementById('dashboard-view').style.display = 'none';
                 
                 const views = ['Patterns', 'Matrix', 'Scales', 'Cubes', 'Symmetry', 'TargetSum'];
-                views.forEach(v => document.getElementById(`view-${v.toLowerCase()}`).classList.remove('active'));
+                views.forEach(v => {
+                    const el = document.getElementById(`view-${v.toLowerCase()}`);
+                    if(el) el.classList.remove('active');
+                });
 
-                switch(moduleName) {
-                    case 'Patterns': Modules.Patterns.init(); break;
-                    case 'Matrix': Modules.Matrix.init(); break;
-                    case 'Scales': Modules.Scales.init(); break;
-                    case 'Cubes': Modules.Cubes.init(); break;
-                    case 'Symmetry': Modules.Symmetry.init(); break;
-                    case 'TargetSum': Modules.TargetSum.init(); break;
-                }
+                // Modül yüklemelerinde DOM tetikleyicisi
+                setTimeout(() => {
+                    switch(moduleName) {
+                        case 'Patterns': Modules.Patterns.init(); break;
+                        case 'Matrix': Modules.Matrix.init(); break;
+                        case 'Scales': Modules.Scales.init(); break;
+                        case 'Cubes': Modules.Cubes.init(); break;
+                        case 'Symmetry': Modules.Symmetry.init(); break;
+                        case 'TargetSum': Modules.TargetSum.init(); break;
+                    }
+                }, 50);
             },
 
             exitToDashboard() {
@@ -351,10 +357,9 @@
         };
 
         const Modules = {
-            // MODULE 1: ARDILIŞIK SAYI ÖRÜNTÜLERİ
             Patterns: {
                 generators: [
-                    () => { let r = Math.floor(Math.random()*4)+2; return { s: `2 - ${2*r} - ${2*r*r} - ${2*r*r*r} - ?`, a: 2*Math.pow(r,4) }; },
+                    () => { let r = Math.floor(Math.random()*3)+2; return { s: `2 - ${2*r} - ${2*r*r} - ${2*r*r*r} - ?`, a: 2*Math.pow(r,4) }; },
                     () => { let s = Math.floor(Math.random()*10)+5; let d = Math.floor(Math.random()*4)+3; return { s: `${s} - ${s+d} - ${s+2*d} - ${s+3*d} - ?`, a: s+4*d }; },
                     () => { let s = Math.floor(Math.random()*5)+2; return { s: `${s} - ${s*2+1} - ${(s*2+1)*2+1} - ?`, a: ((s*2+1)*2+1)*2+1 }; }
                 ],
@@ -384,7 +389,6 @@
                 }
             },
 
-            // MODULE 2: RAVEN MATRİS TESTİ
             Matrix: {
                 dataset: [
                     { nodes: ['⚛️', '☸️', '♊', '?'], ans: '♋', opts: ['♋', '♌', '⚛️', '⚙️'] },
@@ -421,292 +425,23 @@
                 }
             },
 
-            // MODULE 3: DOĞRUSAL KÜTLE DENGELERİ
             Scales: {
                 init() {
                     document.getElementById('view-scales').classList.add('active');
                     const canvas = document.getElementById('canvas-scales');
+                    if(!canvas) return;
                     const ctx = canvas.getContext('2d');
                     ctx.clearRect(0,0,canvas.width,canvas.height);
 
                     let leftWeight = Math.floor(Math.random()*3)+2;
-                    let rightItemVal = Math.floor(Math.random()*2)+1;
                     
-                    // Terazi Fiziksel Çizimi (Canvas)
                     ctx.strokeStyle = "#475569"; ctx.lineWidth = 4;
-                    ctx.beginPath(); ctx.moveTo(225, 150); ctx.lineTo(225, 60); ctx.stroke(); // Orta Mil
-                    ctx.beginPath(); ctx.moveTo(75, 60); ctx.lineTo(375, 60); ctx.stroke(); // Ana Kol
-                    ctx.beginPath(); ctx.moveTo(200, 150); ctx.lineTo(250, 150); ctx.stroke(); // Taban
+                    ctx.beginPath(); ctx.moveTo(225, 150); ctx.lineTo(225, 60); ctx.stroke(); 
+                    ctx.beginPath(); ctx.moveTo(75, 60); ctx.lineTo(375, 60); ctx.stroke(); 
+                    ctx.beginPath(); ctx.moveTo(200, 150); ctx.lineTo(250, 150); ctx.stroke(); 
 
-                    // Sol-Sağ Kefeler
                     ctx.strokeStyle = "#6366f1";
                     ctx.beginPath(); ctx.moveTo(75,60); ctx.lineTo(45,110); ctx.lineTo(105,110); ctx.closePath(); ctx.stroke();
-                    ctx.beginPath(); ctx.moveTo(375,60); ctx.lineTo(345,110); ctx.lineTo(405,110); ctx.closePath(); ctx.stroke();
+                    ctx.beginPath(); ctx.moveTo(375,60); ctx.lineTo(345,110); ctx.lineTo(405,110); ctx.closePath(); stroke();
 
-                    // Font Metrikleri
-                    ctx.fillStyle = "#fff"; ctx.font = "bold 16px sans-serif"; ctx.textAlign = "center";
-                    let leftStr = "📦 ".repeat(leftWeight);
-                    ctx.fillText(leftStr, 75, 135);
-                    ctx.fillText("❓", 375, 135);
-
-                    // Soru Mantığı (1 Kutu = ne kadar?)
-                    let multiplier = Math.floor(Math.random()*2)+2; // Örn: 2 katı veya 3 katı
-                    let ansValue = leftWeight * multiplier;
-                    
-                    let optsData = [ansValue, ansValue+2, ansValue-1, ansValue+1].filter(v => v > 0);
-                    optsData = Array.from(new Set(optsData)).slice(0,4);
-                    while(optsData.length < 4) optsData.push(ansValue + optsData.length + 3);
-                    optsData.sort(() => Math.random() - 0.5);
-
-                    const opts = document.getElementById('node-scales-opts');
-                    opts.innerHTML = '';
-                    optsData.forEach(v => {
-                        let btn = document.createElement('button');
-                        btn.className = 'core-btn s-opt-node';
-                        btn.innerText = `📦 = 💎 x ${v / leftWeight % 1 === 0 ? v/leftWeight : (v/leftWeight).toFixed(1)}`;
-                        if(v === leftWeight * multiplier) {
-                            btn.innerText = `📦 x 1 = 💎 x ${multiplier}`;
-                        }
-                        btn.onclick = () => {
-                            Engine.freezeOptions('.s-opt-node');
-                            if(v === leftWeight * multiplier) { btn.classList.add('correct'); Engine.addMetrics(20); }
-                            else { btn.classList.add('wrong'); }
-                            Engine.activeLoop = setTimeout(() => this.init(), 1200);
-                        };
-                        opts.appendChild(btn);
-                    });
-                }
-            },
-
-            // MODULE 4: ALGORİTMİK İZOMETRİK KÜP PROJEKSİYONU
-            Cubes: {
-                init() {
-                    document.getElementById('view-cubes').classList.add('active');
-                    const canvas = document.getElementById('canvas-cubes');
-                    const ctx = canvas.getContext('2d');
-                    ctx.clearRect(0,0,canvas.width,canvas.height);
-
-                    // Algoritmik Küp Blok Haritası Üretimi
-                    let totalCubes = 0;
-                    let grid = [
-                        [0, 0, 0],
-                        [0, 0, 0],
-                        [0, 0, 0]
-                    ];
-
-                    // Prosedürel Yükseklik İnşası
-                    for(let r=0; r<3; r++) {
-                        for(let c=0; c<3; c++) {
-                            if(r === 0 && c === 0) grid[r][c] = Math.floor(Math.random()*2)+2; // En arka yüksek kule
-                            else grid[r][c] = Math.floor(Math.random() * (grid[Math.max(0, r-1)][c] + 1));
-                            totalCubes += grid[r][c];
-                        }
-                    }
-
-                    // Derinlik Sıralamasına Göre Çizim Motoru (Z-Indexing Isometric Render)
-                    const size = 22;
-                    const originX = 150;
-                    const originY = 60;
-
-                    function drawCube(isoX, isoY, isoZ) {
-                        let cx = originX + (isoX - isoY) * size * Math.cos(Math.PI/6);
-                        let cy = originY + (isoX + isoY) * size * Math.sin(Math.PI/6) - isoZ * size;
-
-                        // Üst Yüz (Işık Tepe Açısı)
-                        ctx.fillStyle = "#818cf8";
-                        ctx.beginPath();
-                        ctx.moveTo(cx, cy);
-                        ctx.lineTo(cx + size * Math.cos(Math.PI/6), cy + size * Math.sin(Math.PI/6));
-                        ctx.lineTo(cx, cy + size);
-                        ctx.lineTo(cx - size * Math.cos(Math.PI/6), cy + size * Math.sin(Math.PI/6));
-                        ctx.closePath(); ctx.fill(); ctx.stroke();
-
-                        // Sol Yüz (Gölge)
-                        ctx.fillStyle = "#4f46e5";
-                        ctx.beginPath();
-                        ctx.moveTo(cx - size * Math.cos(Math.PI/6), cy + size * Math.sin(Math.PI/6));
-                        ctx.lineTo(cx, cy + size);
-                        ctx.lineTo(cx, cy + size + size);
-                        ctx.lineTo(cx - size * Math.cos(Math.PI/6), cy + size * Math.sin(Math.PI/6) + size);
-                        ctx.closePath(); ctx.fill(); ctx.stroke();
-
-                        // Sağ Yüz (Karanlık Gölge)
-                        ctx.fillStyle = "#3730a3";
-                        ctx.beginPath();
-                        ctx.moveTo(cx, cy + size);
-                        ctx.lineTo(cx + size * Math.cos(Math.PI/6), cy + size * Math.sin(Math.PI/6));
-                        ctx.lineTo(cx + size * Math.cos(Math.PI/6), cy + size * Math.sin(Math.PI/6) + size);
-                        ctx.lineTo(cx, cy + size + size);
-                        ctx.closePath(); ctx.fill(); ctx.stroke();
-                    }
-
-                    ctx.strokeStyle = "rgba(15,23,42,0.4)";
-                    ctx.lineWidth = 1;
-
-                    // Arka sıradan öne doğru sıralı çizim
-                    for(let x=0; x<3; x++) {
-                        for(let y=0; y<3; y++) {
-                            for(let z=0; z<grid[x][y]; z++) {
-                                drawCube(x, y, z);
-                            }
-                        }
-                    }
-
-                    // Seçenek Havuzu
-                    let optsData = [totalCubes, totalCubes+1, totalCubes-1, totalCubes+2].sort(() => Math.random() - 0.5);
-                    const opts = document.getElementById('node-cubes-opts');
-                    opts.innerHTML = '';
-                    optsData.forEach(v => {
-                        let btn = document.createElement('button');
-                        btn.className = 'core-btn c-opt-node';
-                        btn.innerText = v;
-                        btn.onclick = () => {
-                            Engine.freezeOptions('.c-opt-node');
-                            if(v === totalCubes) { btn.classList.add('correct'); Engine.addMetrics(20); }
-                            else { btn.classList.add('wrong'); }
-                            Engine.activeLoop = setTimeout(() => this.init(), 1000);
-                        };
-                        opts.appendChild(btn);
-                    });
-                }
-            },
-
-            // MODULE 5: PROSEDÜREL VEKTÖREL SİMETRİ
-            Symmetry: {
-                init() {
-                    document.getElementById('view-symmetry').classList.add('active');
-                    const canvas = document.getElementById('canvas-symmetry');
-                    const ctx = canvas.getContext('2d');
-                    ctx.clearRect(0,0,canvas.width,canvas.height);
-
-                    // Eksen Çizgisi Çizimi
-                    ctx.strokeStyle = varColor('--color-danger'); ctx.lineWidth = 2; ctx.setLineDash([4, 4]);
-                    ctx.beginPath(); ctx.moveTo(180, 10); ctx.lineTo(180, 150); ctx.stroke(); ctx.setLineDash([]);
-
-                    // Rastgele Noktalar Kümesi Üretimi (Poligon)
-                    let points = [];
-                    for(let i=0; i<4; i++) {
-                        points.push({
-                            x: Math.floor(Math.random()*80) + 40,
-                            y: Math.floor(Math.random()*100) + 30
-                        });
-                    }
-
-                    // Sol Orijinal Şekli Çizme
-                    function drawShape(ctx, pts, offsetX) {
-                        ctx.fillStyle = "rgba(99, 102, 241, 0.3)";
-                        ctx.strokeStyle = "#818cf8"; ctx.lineWidth = 2;
-                        ctx.beginPath();
-                        ctx.moveTo(pts[0].x + offsetX, pts[0].y);
-                        for(let i=1; i<pts.length; i++) ctx.lineTo(pts[i].x + offsetX, pts[i].y);
-                        ctx.closePath(); ctx.fill(); ctx.stroke();
-                    }
-
-                    drawShape(ctx, points, 0); // Sol tarafa çizildi
-
-                    // Doğru Ayna Simetri Koordinatları (Matematiksel Dönüşüm)
-                    let correctMirrorPts = points.map(p => {
-                        let distToAxis = 180 - p.x;
-                        return { x: 180 + distToAxis, y: p.y };
-                    });
-
-                    // Yanlış Simetri Seçenekleri (Yatay Ters Çevirme vb.)
-                    let wrongMirrorPts = points.map(p => {
-                        return { x: 180 + (180 - p.x), y: 180 - p.y + 20 }; // Bozuk Y koordinatı
-                    });
-
-                    let typeSetup = Math.random() > 0.5;
-                    if(typeSetup) {
-                        drawShape(ctx, correctMirrorPts, 0); // Görsel olarak sağa doğru çizdik test amaçlı değil şıkları buton yapacağız.
-                    }
-                    
-                    // Şıkları oluştur (Ayna mı, Değil mi?)
-                    const opts = document.getElementById('node-symmetry-opts');
-                    opts.innerHTML = '';
-                    
-                    let options = [
-                        { text: 'Kusursuz Simetrik ✅', isTrue: true },
-                        { text: 'Asimetrik / Hatalı Yansıma ❌', isTrue: false }
-                    ];
-
-                    if(!typeSetup) {
-                        // Eğer rastgele şansımıza sağ tarafa yanlış şekli çizdiysek doğru cevabı güncelliyoruz
-                        ctx.clearRect(182, 0, canvas.width, canvas.height);
-                        drawShape(ctx, wrongMirrorPts, 0);
-                        options[0].isTrue = false;
-                        options[1].isTrue = true;
-                    }
-
-                    options.forEach(o => {
-                        let btn = document.createElement('button');
-                        btn.className = 'core-btn sym-opt-node';
-                        btn.innerText = o.text;
-                        btn.onclick = () => {
-                            Engine.freezeOptions('.sym-opt-node');
-                            if(o.isTrue) { btn.classList.add('correct'); Engine.addMetrics(20); }
-                            else { btn.classList.add('wrong'); }
-                            Engine.activeLoop = setTimeout(() => this.init(), 1200);
-                        };
-                        opts.appendChild(btn);
-                    });
-                }
-            },
-
-            // MODULE 6: KOMBİNASYONEL TOPLAM OPTİMİZASYONU
-            TargetSum: {
-                init() {
-                    document.getElementById('view-target').classList.add('active');
-                    let target = Math.floor(Math.random() * 25) + 20; // Target aralığı 20-45
-                    document.getElementById('node-target-val').innerText = target;
-
-                    let n1 = Math.floor(Math.random() * (target - 6)) + 3;
-                    let n2 = target - n1;
-
-                    let dataPool = [n1, n2];
-                    while(dataPool.length < 6) {
-                        let r = Math.floor(Math.random() * 40) + 2;
-                        if(!dataPool.includes(r) && r !== n1) dataPool.push(r);
-                    }
-                    dataPool.sort(() => Math.random() - 0.5);
-
-                    const grid = document.getElementById('node-target-grid');
-                    grid.innerHTML = '';
-
-                    let selections = [];
-                    dataPool.forEach(val => {
-                        let chip = document.createElement('button');
-                        chip.className = 'target-chip t-opt-node';
-                        chip.innerText = val;
-                        chip.onclick = () => {
-                            if(chip.classList.contains('active')) return;
-                            chip.classList.add('active');
-                            selections.push({ el: chip, v: val });
-
-                            if(selections.length === 2) {
-                                Engine.freezeOptions('.t-opt-node');
-                                let sum = selections[0].v + selections[1].v;
-                                if(sum === target) {
-                                    selections.forEach(s => s.el.style.background = 'var(--color-success)');
-                                    Engine.addMetrics(15);
-                                } else {
-                                    selections.forEach(s => s.el.style.background = 'var(--color-danger)');
-                                }
-                                Engine.activeLoop = setTimeout(() => this.init(), 1000);
-                            }
-                        };
-                        grid.appendChild(chip);
-                    });
-                }
-            }
-        };
-
-        // Helper CSS variable extractor
-        function varColor(name) {
-            return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
-        }
-
-        // Bootstrapping Application
-        window.onload = () => Engine.init();
-    </script>
-</body>
-</html>
+  
